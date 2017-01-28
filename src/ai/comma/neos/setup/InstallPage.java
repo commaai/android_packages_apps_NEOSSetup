@@ -11,14 +11,12 @@ import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class InstallPage extends SetupPage {
 
@@ -98,7 +96,7 @@ public class InstallPage extends SetupPage {
                 fos.flush();
                 fos.close();
 
-                Files.move(Paths.get(tmpPath), Paths.get(outputPath));
+                (new File(tmpPath)).renameTo(new File(outputPath));
 
                 return true;
             } catch(Exception e) {

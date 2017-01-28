@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class InstallPage extends SetupPage {
 
     public static final String TAG = "InstallPage";
@@ -76,7 +79,7 @@ public class InstallPage extends SetupPage {
 
     class DownloadAppTask extends AsyncTask<String, Integer, Boolean> {
         protected Boolean doInBackground(String... url) {
-            String outputFile = "/data/data/ai.comma.neos.setup/continue.sh";
+            String outputPath = "/data/data/ai.comma.neos.setup/installer";
             try {
                 URL u = new URL(url[0]);
                 URLConnection conn = u.openConnection();
@@ -88,10 +91,15 @@ public class InstallPage extends SetupPage {
                 stream.readFully(buffer);
                 stream.close();
 
-                DataOutputStream fos = new DataOutputStream(new FileOutputStream(outputFile));
+                String tmpPath = outputPath+".tmp";
+
+                DataOutputStream fos = new DataOutputStream(new FileOutputStream(tmpPath));
                 fos.write(buffer);
                 fos.flush();
                 fos.close();
+
+                Files.move(Paths.get(tmpPath), Paths.get(outputPath));
+
                 return true;
             } catch(Exception e) {
                 return false;

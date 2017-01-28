@@ -81,6 +81,8 @@ public class InstallPage extends SetupPage {
             try {
                 URL u = new URL(url[0]);
                 URLConnection conn = u.openConnection();
+                conn.setRequestProperty("User-Agent", "NEOSSetup-0.1");
+
                 int contentLength = conn.getContentLength();
 
                 DataInputStream stream = new DataInputStream(u.openStream());

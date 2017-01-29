@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -85,7 +86,7 @@ public class InstallPage extends SetupPage {
 
                 int contentLength = conn.getContentLength();
 
-                DataInputStream stream = new DataInputStream(u.openStream());
+                DataInputStream stream = new DataInputStream(conn.getInputStream());
 
                 byte[] buffer = new byte[contentLength];
                 stream.readFully(buffer);
@@ -102,6 +103,7 @@ public class InstallPage extends SetupPage {
 
                 return true;
             } catch(Exception e) {
+                Log.e(e.getClass().getName(), e.getMessage(), e);
                 return false;
             }
         }

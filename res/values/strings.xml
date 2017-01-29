@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">setup</string>
-    <string name="install_page_title">Install NEOS App</string>
-    <string name="install_page_text">Enter the URL of the NEOS app to install</string>
+    <string name="install_page_title">Install NEOS Program</string>
+    <string name="install_page_text">Enter the URL of the NEOS program to install</string>
     
     <string name="product_name" translatable="false">cyanogenmod</string>
     <string name="os_name" translatable="false">CyanogenMod</string>

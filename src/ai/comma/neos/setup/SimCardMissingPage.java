@@ -63,8 +63,7 @@ public class SimCardMissingPage extends SetupPage {
 
     @Override
     public int getNextButtonTitleResId() {
-//        return R.string.skip;
-        return -1;
+       return R.string.skip;
     }
 
 

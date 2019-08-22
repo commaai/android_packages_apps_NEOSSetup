@@ -105,8 +105,8 @@ class SetupTerms extends Component {
 
 const mapDispatchToProps = dispatch => ({
     handleSetupTermsCompleted: async () => {
-        const termsVersion = await ChffrPlus.readParam(Params.KEY_LATEST_TERMS_VERSION);
-        ChffrPlus.writeParam(Params.KEY_ACCEPTED_TERMS_VERSION, termsVersion);
+        // const termsVersion = await ChffrPlus.readParam(Params.KEY_LATEST_TERMS_VERSION);
+        // ChffrPlus.writeParam(Params.KEY_ACCEPTED_TERMS_VERSION, termsVersion);
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,

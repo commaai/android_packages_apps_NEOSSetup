@@ -19,6 +19,14 @@ class ChffrPlusParams {
             return file
         }
 
+        fun createCompletedSetupFile(version: String): File {
+            val path = "/sdcard/neos_setup_completed"
+            val file = File(path)
+            file.createNewFile()
+            file.writeText(version)
+            return file
+        }
+
         fun lockParams() {
             try {
                 Runtime.getRuntime().exec("flock -w 2 /data/params/.lock")

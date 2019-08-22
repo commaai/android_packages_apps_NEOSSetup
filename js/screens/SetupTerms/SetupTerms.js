@@ -74,11 +74,12 @@ class SetupTerms extends Component {
                             onScroll={ this.onScroll }
                             style={ Styles.setupTermsScrollView }
                             onLayout={ this.onScrollViewLayout }>
-                            { terms == "" ? (
-                                <X.Text weight='semibold' color='white'>Please wait...</X.Text>
-                            ) : (
-                                <X.Text size='small' color='white'>{ terms }</X.Text>
-                            ) }
+                            <X.Text
+                                size='small'
+                                color='white'
+                                style={ Styles.setupTermsText }>
+                                { terms == "" ? 'Please wait...' : terms }
+                            </X.Text>
                         </ScrollView>
                     </View>
                     <View style={ Styles.setupTermsButtons }>

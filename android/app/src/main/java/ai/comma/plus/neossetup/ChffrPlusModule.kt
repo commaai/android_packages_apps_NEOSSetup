@@ -121,6 +121,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             Log.d("neossetup", result)
             if (result == "succeeded") {
                 try {
+                    ChffrPlusParams.writeParam("HasCompletedSetup", "1")
                     Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 16 i32 0 i32 0 i32 1"))
                 } catch (e: IOException) {
                     CloudLog.exception("NeosSetup.reboot", e)

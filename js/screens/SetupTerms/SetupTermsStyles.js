@@ -21,7 +21,8 @@ export default StyleSheet.create({
         flex: 0.65,
         position: 'relative',
     },
-    setupTermsScrollView: {
+    setupTermsScrollView: {},
+    setupTermsText: {
         padding: 20,
     },
     setupTermsButtons: {

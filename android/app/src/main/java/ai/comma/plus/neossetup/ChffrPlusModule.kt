@@ -79,6 +79,10 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
         }
     }
 
+    private fun finish() {
+        ctx.currentActivity?.finish()
+    }
+
     class DownloadApp(private var module: ChffrPlusModule?) : AsyncTask<String, String, String>() {
         override fun doInBackground(vararg params: String): String {
             val outputPath = "/data/data/ai.comma.plus.neossetup/installer"
@@ -121,9 +125,9 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             if (result !== "0") {
                 try {
                     ChffrPlusParams.createCompletedSetupFile(result)
-                    /* Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 16 i32 0 i32 0 i32 1")) */
+                    module?.finish()
                 } catch (e: IOException) {
-                    /* CloudLog.exception("NeosSetup.reboot", e) */
+                    CloudLog.exception("NeosSetup.onPostExecute", e)
                 }
             } else {
                 // handle error

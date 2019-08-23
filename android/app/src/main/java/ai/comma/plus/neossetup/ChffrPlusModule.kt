@@ -121,9 +121,9 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             if (result !== "0") {
                 try {
                     ChffrPlusParams.createCompletedSetupFile(result)
-                    Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 16 i32 0 i32 0 i32 1"))
+                    /* Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 16 i32 0 i32 0 i32 1")) */
                 } catch (e: IOException) {
-                    CloudLog.exception("NeosSetup.reboot", e)
+                    /* CloudLog.exception("NeosSetup.reboot", e) */
                 }
             } else {
                 // handle error

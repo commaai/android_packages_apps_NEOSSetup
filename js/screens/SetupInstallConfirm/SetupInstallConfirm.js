@@ -18,7 +18,15 @@ class SetupInstallConfirm extends Component {
         this.props.handleSetupInstallConfirmCompleted(softwareUrl, termsVersion);
     }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            statusText: "Once your software has finished downloading, the installation will begin.",
+        }
+    }
+
     render() {
+        const { statusText } = this.state;
         return (
             <X.Gradient
                 color='dark_black'
@@ -28,13 +36,13 @@ class SetupInstallConfirm extends Component {
                         size='jumbo'
                         weight='bold'
                         color='white'
-                        style={ Styles.setupInstallConfirmHeadline }>Starting installation...</X.Text>
+                        style={ Styles.setupInstallConfirmHeadline }>Downloading software...</X.Text>
                     <X.Text
                         size='medium'
                         color='white'
                         weight='light'
                         style={ Styles.setupInstallConfirmIntro }>
-                        Make sure EON is connected to power. EON will reboot and install your software.
+                        { statusText }
                     </X.Text>
                     <View style={ Styles.setupInstallConfirmButton }>
                         <X.Button

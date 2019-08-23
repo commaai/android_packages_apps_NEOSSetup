@@ -14,8 +14,8 @@ class SetupInstallConfirm extends Component {
     };
 
     componentDidMount() {
-        const { softwareUrl } = this.props;
-        this.props.handleSetupInstallConfirmCompleted(softwareUrl);
+        const { softwareUrl, termsVersion } = this.props;
+        this.props.handleSetupInstallConfirmCompleted(softwareUrl, termsVersion);
     }
 
     render() {
@@ -53,14 +53,14 @@ class SetupInstallConfirm extends Component {
 let mapStateToProps = function(state) {
     return {
         softwareUrl: state.host.softwareUrl,
+        termsVersion: state.host.termsVersion,
     }
 }
 
 
 const mapDispatchToProps = dispatch => ({
-    handleSetupInstallConfirmCompleted: (softwareUrl) => {
-        ChffrPlus.startInstaller(softwareUrl);
-        // ChffrPlus.writeParam(Params.KEY_HAS_COMPLETED_SETUP, "1");
+    handleSetupInstallConfirmCompleted: (softwareUrl, termsVersion) => {
+        ChffrPlus.startInstaller(softwareUrl, termsVersion);
     },
     handleSetupInstallConfirmBackPressed: () => {
         dispatch(NavigationActions.reset({

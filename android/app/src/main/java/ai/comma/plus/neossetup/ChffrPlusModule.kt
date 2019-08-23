@@ -80,11 +80,11 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     class DownloadApp(private var module: ChffrPlusModule?) : AsyncTask<String, String, String>() {
-        override fun doInBackground(vararg link: String): String {
+        override fun doInBackground(vararg params: String): String {
             val outputPath = "/data/data/ai.comma.plus.neossetup/installer"
-            var result = "none"
+            var result = "0"
             try {
-                val url = URL(link[0])
+                val url = URL(params[0])
                 val conn = url.openConnection() as URLConnection
                 conn.setRequestProperty("User-Agent", "NEOSSetup-0.2")
 
@@ -102,11 +102,10 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
                 outStream.close()
 
                 File(tmpPath).renameTo(File(outputPath))
-                result = "succeeded"
+                result = params[1]
                 return result
             } catch (ex: Exception) {
                 Log.d("neossetup", "Error in doInBackground " + ex.message)
-                result = "failed"
                 return result
             }
             return result
@@ -116,12 +115,12 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             super.onPreExecute()
         }
 
-        override fun onPostExecute(result: String?) {
+        override fun onPostExecute(result: String) {
             super.onPostExecute(result)
             Log.d("neossetup", result)
-            if (result == "succeeded") {
+            if (result !== "0") {
                 try {
-                    ChffrPlusParams.createCompletedSetupFile("1")
+                    ChffrPlusParams.createCompletedSetupFile(result)
                     Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 16 i32 0 i32 0 i32 1"))
                 } catch (e: IOException) {
                     CloudLog.exception("NeosSetup.reboot", e)
@@ -133,9 +132,9 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun startInstaller(link: String) {
+    fun startInstaller(link: String, termsVersion: String) {
         Log.d("neossetup installer", link);
-        DownloadApp(this).execute(link)
+        DownloadApp(this).execute(link, termsVersion)
     }
 
     @ReactMethod

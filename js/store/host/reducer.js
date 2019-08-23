@@ -5,6 +5,7 @@ import {
     ACTION_DEVICE_IDS_AVAILABLE,
     ACTION_DEVICE_REFRESHED,
     ACTION_SOFTWARE_URL_CHANGED,
+    ACTION_TERMS_VERSION_CHANGED,
 } from './actions';
 import SimState from './SimState';
 
@@ -17,6 +18,7 @@ const initialHostState = {
     deviceJwt: null,
     device: null,
     softwareUrl: '',
+    termsVersion: '',
 };
 
 export default (state = initialHostState, action) => {
@@ -52,6 +54,11 @@ export default (state = initialHostState, action) => {
             return {
                 ...state,
                 softwareUrl: action.softwareUrl,
+            }
+        case ACTION_TERMS_VERSION_CHANGED:
+            return {
+                ...state,
+                termsVersion: action.termsVersion,
             }
         default:
             return state;

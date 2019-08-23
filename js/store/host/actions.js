@@ -8,6 +8,7 @@ export const ACTION_WIFI_STATE_CHANGED = 'ACTION_WIFI_STATE_CHANGED';
 export const ACTION_DEVICE_IDS_AVAILABLE = 'ACTION_DEVICE_IDS_AVAILABLE';
 export const ACTION_DEVICE_REFRESHED = 'ACTION_DEVICE_REFRESHED';
 export const ACTION_SOFTWARE_URL_CHANGED = 'ACTION_SOFTWARE_URL_CHANGED';
+export const ACTION_TERMS_VERSION_CHANGED = 'ACTION_TERMS_VERSION_CHANGED';
 
 export function updateWifiState() {
     return async dispatch => {
@@ -82,6 +83,15 @@ export function updateSoftwareUrl(softwareUrl) {
         dispatch({
             type: ACTION_SOFTWARE_URL_CHANGED,
             softwareUrl,
+        })
+    }
+}
+
+export function updateTermsVersion(termsVersion) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: ACTION_TERMS_VERSION_CHANGED,
+            termsVersion,
         })
     }
 }

@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
+import { updateTermsVersion } from '../../store/host/actions';
 import ChffrPlus from '../../native/ChffrPlus';
 import { Params } from '../../config';
 import Documents from './Documents';
@@ -18,6 +19,7 @@ class SetupTerms extends Component {
     static propTypes = {
         handleSetupTermsCompleted: PropTypes.func,
         handleSetupTermsBackPressed: PropTypes.func,
+        updateTermsVersion: PropTypes.func,
     };
 
     constructor(props) {
@@ -34,6 +36,7 @@ class SetupTerms extends Component {
         const _terms = await fetch('https://chffrdist.blob.core.windows.net/setup/op_terms.json');
         const terms = await _terms.json();
         this.setState({ terms: terms.text });
+        this.props.handleTermsVersionChanged(terms.version);
     }
 
     onScroll = ({ nativeEvent }) => {
@@ -104,9 +107,10 @@ class SetupTerms extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
+    handleTermsVersionChanged: (termsVersion) => {
+        dispatch(updateTermsVersion(termsVersion));
+    },
     handleSetupTermsCompleted: async () => {
-        // const termsVersion = await ChffrPlus.readParam(Params.KEY_LATEST_TERMS_VERSION);
-        // ChffrPlus.writeParam(Params.KEY_ACCEPTED_TERMS_VERSION, termsVersion);
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,

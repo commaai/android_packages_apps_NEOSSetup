@@ -1,12 +1,20 @@
 #!/bin/bash
 set -e
 
+cd $(dirname $0)
+
 APK_OUT=${1:-ai.comma.plus.neossetup.apk}
-TOOLS="$PWD/../tools"
-CEREAL="$PWD/../../cereal"
+SIGNAPK=${SIGNAPK:="./signapk"}
+CEREAL=${CEREAL:="./cereal"}
 export SENTRY_SKIP_UPLOAD=${SENTRY_SKIP_UPLOAD:-1}
 
+if [ ! -d $SIGNAPK ]; then
+  echo "sign apk not found"
+  git clone https://github.com/techexpertize/SignApk.git $SIGNAPK
+fi
+
 if [ ! -d $CEREAL ]; then
+  echo "cereal not found"
   git clone https://github.com/commaai/cereal.git $CEREAL
 fi
 
@@ -37,5 +45,5 @@ else
     (cd android && ./gradlew clean && (./gradlew assembleDebug || ./gradlew assembleDebug))
 fi
 
-java -jar $TOOLS/signapk/signapk.jar $TOOLS/signapk/certificate.pem $TOOLS/signapk/key.pk8 $APK_PATH $APK_OUT
+java -jar $SIGNAPK/signapk.jar $SIGNAPK/certificate.pem $SIGNAPK/key.pk8 $APK_PATH $APK_OUT
 echo "build complete"

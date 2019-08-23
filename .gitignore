@@ -1,3 +1,6 @@
+cereal/
+signapk/
+
 # Node
 node_modules/
 .expo/
@@ -10,6 +13,7 @@ build/
 local.properties
 *.iml
 android/app/src/main/assets/
+*.apk
 
 # Metro
 metro.config.js

@@ -5,7 +5,6 @@ cd $(dirname $0)
 
 APK_OUT=${1:-ai.comma.plus.neossetup.apk}
 SIGNAPK=${SIGNAPK:="./signapk"}
-CEREAL=${CEREAL:="./cereal"}
 export SENTRY_SKIP_UPLOAD=${SENTRY_SKIP_UPLOAD:-1}
 
 if [ ! -d $SIGNAPK ]; then
@@ -13,12 +12,6 @@ if [ ! -d $SIGNAPK ]; then
   git clone https://github.com/techexpertize/SignApk.git $SIGNAPK
 fi
 
-if [ ! -d $CEREAL ]; then
-  echo "cereal not found"
-  git clone https://github.com/commaai/cereal.git $CEREAL
-fi
-
-pushd $CEREAL
 make
 popd
 

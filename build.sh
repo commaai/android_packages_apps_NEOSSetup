@@ -10,10 +10,10 @@ export SENTRY_SKIP_UPLOAD=${SENTRY_SKIP_UPLOAD:-1}
 if [ ! -d $SIGNAPK ]; then
   echo "sign apk not found"
   git clone https://github.com/techexpertize/SignApk.git $SIGNAPK
+  pushd $SIGNAPK
+  git checkout fa744e5862bfca402b04b53953ce415d580e7abb
+  popd
 fi
-
-make
-popd
 
 export SENTRY_WIZARD_INTEGRATION=reactNative
 

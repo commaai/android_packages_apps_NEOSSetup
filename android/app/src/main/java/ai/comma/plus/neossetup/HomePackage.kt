@@ -16,7 +16,7 @@ class HomePackage : MainReactPackage() {
                     ChffrPlusModule(context!!)
                 }),
                 ModuleSpec(LoggingModule::class.java, {
-                    LoggingModule(context!!, BuildConfig.MIXPANEL_PROJECT_TOKEN, BuildConfig.LOGENTRIES_PROJECT_TOKEN)
+                    LoggingModule(context!!, BuildConfig.LOGENTRIES_PROJECT_TOKEN)
                 }),
                 ModuleSpec(WifiModule::class.java, {
                     WifiModule(context!!)

@@ -8,6 +8,7 @@ import {
     ACTION_TERMS_VERSION_CHANGED,
 } from './actions';
 import SimState from './SimState';
+import { Constants } from '../../config';
 
 const initialHostState = {
     simState: SimState.UNKNOWN,
@@ -17,8 +18,8 @@ const initialHostState = {
     serial: null,
     deviceJwt: null,
     device: null,
-    softwareUrl: '',
-    termsVersion: '',
+    softwareUrl: 'https://',
+    termsVersion: Constants.INITIAL_SOFTWARE_URL,
 };
 
 export default (state = initialHostState, action) => {

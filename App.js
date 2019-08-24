@@ -4,18 +4,14 @@ import {
     Platform,
 } from 'react-native';
 import { compose, createStore, applyMiddleware } from 'redux';
-import { persistStore } from 'redux-persist';
-import { PersistGate } from 'redux-persist/es/integration/react';
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 
 import RootReducer from './js/store';
 import StackNavigator from './js/navigators/StackNavigator';
 import SimStateListener from './js/utils/SimStateListener';
-import AppStateListener from './js/utils/AppStateListener';
 import WifiStateListener from './js/utils/WifiStateListener';
 
-import { refreshParams } from './js/store/params/actions';
 import {
     updateSimState,
     updateWifiState,
@@ -26,11 +22,7 @@ import {
 import { Sentry } from 'react-native-sentry';
 
 if (!__DEV__) {
-    // const sentryDsn = Platform.select({
-    //   "ios":"https://50043662792c42558b59f761be477b71:79b74f53eaae4b5494e2a3a12b307453@sentry.io/257901",
-    //   "android":"https://50043662792c42558b59f761be477b71:79b74f53eaae4b5494e2a3a12b307453@sentry.io/257901"
-    // });
-    // Sentry.config(sentryDsn).install();
+    // Sentry.config("https://9df5c8e976614af38b62b67faf49bf41@sentry.io/1540422").install();
 }
 
 function createNeosSetupStore() {
@@ -38,25 +30,20 @@ function createNeosSetupStore() {
     const store = createStore(RootReducer,
                               undefined,
                               transforms);
-    let persistor = persistStore(store, { debug: true });
-    return { store, persistor };
+    return { store };
 }
 
 export default class App extends Component {
     constructor(props) {
         super(props);
 
-        const { store, persistor } = createNeosSetupStore();
+        const { store } = createNeosSetupStore();
         this.store = store;
-        this.persistor = persistor;
-        this.onBeforeLift = this.onBeforeLift.bind(this);
     }
 
     async onBeforeLift() {
         // Called after store is rehydrated from disk
         this.store.dispatch(setDeviceIds()).then(() => this.store.dispatch(refreshDeviceInfo()));
-        this.store.dispatch(refreshParams());
-        AppStateListener.register(this.store.dispatch);
         SimStateListener.register(this.store.dispatch);
         WifiStateListener.register(this.store.dispatch);
     }
@@ -75,11 +62,7 @@ export default class App extends Component {
     render() {
         return (
             <Provider store={ this.store }>
-                <PersistGate
-                    persistor={ this.persistor }
-                    onBeforeLift={ this.onBeforeLift }>
-                    <StackNavigator />
-                </PersistGate>
+                <StackNavigator />
             </Provider>
         );
     }

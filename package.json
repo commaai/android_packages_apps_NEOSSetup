@@ -36,7 +36,6 @@
     "@mapbox/polyline": "^0.2.0",
     "comma-x-native": "git+https://git@github.com/commaai/comma-x-native.git",
     "core-js": "^2.6.5",
-    "moment": "^2.19.1",
     "react": "16.0.0-beta.5",
     "react-native": "^0.49.5",
     "react-native-cookies": "^3.2.0",

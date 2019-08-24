@@ -83,6 +83,14 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
         ctx.currentActivity?.finish()
     }
 
+    private fun createCompletedSetupFile(version: String): File {
+        val path = "/sdcard/neos_setup_completed"
+        val file = File(path)
+        file.createNewFile()
+        file.writeText(version)
+        return file
+    }
+
     class DownloadApp(private var module: ChffrPlusModule?) : AsyncTask<String, String, String>() {
         override fun doInBackground(vararg params: String): String {
             val outputPath = "/data/data/ai.comma.plus.neossetup/installer"
@@ -124,7 +132,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             Log.d("neossetup", result)
             if (result !== "0") {
                 try {
-                    ChffrPlusParams.createCompletedSetupFile(result)
+                    module?.createCompletedSetupFile(result)
                     module?.finish()
                 } catch (e: IOException) {
                     CloudLog.exception("NeosSetup.onPostExecute", e)
@@ -165,15 +173,6 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun getNetworkTxSpeedKbps(promise: Promise) {
-        NetworkSpeedSampler.requestSample(object : NetworkSpeedSamplerCallback {
-            override fun onSpeedMeasured(kbps: Double) {
-                promise.resolve(kbps)
-            }
-        }, 1000)
-    }
-
-    @ReactMethod
     fun setSshEnabled(enabled: Boolean) {
         try {
             val c = Class.forName("android.os.SystemProperties")
@@ -196,21 +195,6 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
             promise.reject("couldn't get serial number", e)
         }
 
-    }
-
-    @ReactMethod
-    fun readParam(param: String, promise: Promise) {
-        promise.resolve(ChffrPlusParams.readParam(param))
-    }
-
-    @ReactMethod
-    fun deleteParam(key: String, promise: Promise) {
-        promise.resolve(ChffrPlusParams.deleteParam(key))
-    }
-
-    @ReactMethod
-    fun writeParam(key: String, value: String) {
-        ChffrPlusParams.writeParam(key, value)
     }
 
     @ReactMethod

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import ChffrPlus from '../../native/ChffrPlus';
 import { updateSoftwareUrl, resetSoftwareUrl } from '../../store/host/actions';
-import { Params } from '../../config';
+import { Constants } from '../../config';
 import X from '../../themes';
 import Styles from './SetupInstallCustomStyles';
 
@@ -57,11 +57,11 @@ class SetupInstallCustom extends Component {
                             Go back
                         </X.Button>
                         <X.Button
-                            color={ softwareUrl !== 'https://' ? 'setupPrimary' : 'setupDisabled' }
-                            onPress={ softwareUrl !== 'https://' ? this.props.handleSetupInstallCompleted : null }
+                            color={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? 'setupPrimary' : 'setupDisabled' }
+                            onPress={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? this.props.handleSetupInstallCompleted : null }
                             style={ Styles.setupInstallCustomButtonsContinue }>
                             <X.Text
-                                color={ softwareUrl !== 'https://' ? 'white' : 'setupDisabled' }
+                                color={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? 'white' : 'setupDisabled' }
                                 weight='semibold'>
                                 Install Software
                             </X.Text>

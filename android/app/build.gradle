@@ -114,8 +114,7 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        buildConfigField 'String', 'MIXPANEL_PROJECT_TOKEN', '"1f3556f844253e172ea6f18384b0fd4c"'
-        buildConfigField 'String', 'LOGENTRIES_PROJECT_TOKEN', '"e53e6e1d-2b4a-46ae-847a-ff8e8e835f38"'
+        buildConfigField 'String', 'LOGENTRIES_PROJECT_TOKEN', '"aefdcff9-ad3c-442c-8b48-1dda2dd29ff8"'
         buildConfigField 'String', 'RN_DEBUG_HOST', '"192.168.254.127:8081"'
     }
     splits {
@@ -149,7 +148,6 @@ android {
 
 buildscript {
     repositories {
-        maven { url 'https://maven.fabric.io/public' }
         maven { url 'https://maven.google.com' }
     }
 
@@ -158,14 +156,10 @@ buildscript {
         // can be updated quickly in response to Android tooling updates
 
         // We recommend changing it to the latest version from our changelog:
-        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
-        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
-apply plugin: 'io.fabric'
 
 repositories {
-    maven { url 'https://maven.fabric.io/public' }
     maven { url 'https://maven.google.com' }
 }
 
@@ -179,11 +173,7 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
-    compile('com.crashlytics.sdk.android:crashlytics:2.8.0@aar') {
-        transitive = true;
-    }
 
-    compile 'com.mixpanel.android:mixpanel-android:5.+'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'org.zeromq:jeromq:0.4.3'
     compile 'org.capnproto:runtime:0.1.1'

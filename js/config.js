@@ -27,3 +27,7 @@ export const Params = {
     KEY_LIVE_PARAMETERS: 'LiveParameters',
     KEY_GITHUB_SSH_KEYS: 'GithubSshKeys',
 };
+
+export const Constants = {
+    INITIAL_SOFTWARE_URL: 'https://',
+}

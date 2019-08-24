@@ -4,12 +4,10 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.horcrux.svg.SvgPackage;
 import com.pusherman.networkinfo.RNNetworkInfoPackage;
 
-import io.fabric.sdk.android.Fabric;
 import io.sentry.RNSentryPackage;
 import com.psykar.cookiemanager.CookieManagerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -63,7 +61,6 @@ public class MainApplication extends Application implements ReactApplication {
 
     super.onCreate();
 
-    Fabric.with(this, new Crashlytics());
     SoLoader.init(this, /* native exopackage */ false);
   }
 }

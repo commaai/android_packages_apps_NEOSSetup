@@ -22,7 +22,7 @@ import {
 import { Sentry } from 'react-native-sentry';
 
 if (!__DEV__) {
-    // Sentry.config("https://9df5c8e976614af38b62b67faf49bf41@sentry.io/1540422").install();
+    Sentry.config("https://9df5c8e976614af38b62b67faf49bf41:8c7123e92a194ec3a4343edc07947435@sentry.io/1540422").install();
 }
 
 function createNeosSetupStore() {

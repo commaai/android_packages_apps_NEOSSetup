@@ -1,0 +1,22 @@
+cereal/
+signapk/
+
+# Node
+node_modules/
+.expo/
+npm-debug.*
+
+# Android
+build/
+.idea
+.gradle
+local.properties
+*.iml
+android/app/src/main/assets/
+*.apk
+
+# Metro
+metro.config.js
+
+# Mac
+.DS_Store

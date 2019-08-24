@@ -1,18 +1,18 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
+$(info $(shell ($(LOCAL_PATH)/build.sh)))
+
 LOCAL_MODULE_TAGS := optional
 
-LOCAL_SRC_FILES := $(call all-java-files-under,src)
-
-LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
-
-# LOCAL_STATIC_JAVA_LIBRARIES += android-common
+LOCAL_MODULE := NEOSSetup
+LOCAL_SRC_FILES := ai.comma.plus.neossetup.apk
+LOCAL_MODULE_CLASS := APPS
+LOCAL_MODULE_SUFFIX := $(COMMON_ANDROID_PACKAGE_SUFFIX)
+LOCAL_CERTIFICATE := PRESIGNED
 
 LOCAL_PACKAGE_NAME := NEOSSetup
 
 LOCAL_PRIVILEGED_MODULE := true
-
-# LOCAL_PROGUARD_FLAG_FILES := proguard.flags
-
-include $(BUILD_PACKAGE)
+TARGET_OUT_DATA_APPS_PRIVILEGED := $(TARGET_OUT_DATA)/priv-app
+include $(BUILD_PREBUILT)

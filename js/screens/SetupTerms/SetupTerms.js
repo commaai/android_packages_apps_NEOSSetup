@@ -29,14 +29,19 @@ class SetupTerms extends Component {
             hasScrolled: false,
             isAtBottom: false,
             terms: "",
+            loadingMessage: "Please wait...",
         };
     }
 
     async componentDidMount() {
-        const _terms = await fetch('https://chffrdist.blob.core.windows.net/setup/op_terms.json');
-        const terms = await _terms.json();
-        this.setState({ terms: terms.text });
-        this.props.handleTermsVersionChanged(terms.version);
+        try {
+            const _terms = await fetch('https://chffrdist.blob.core.windows.net/setup/op_terms.json');
+            const terms = await _terms.json();
+            this.setState({ terms: terms.text });
+            this.props.handleTermsVersionChanged(terms.version);
+        } catch(error) {
+            this.setState({ loadingMessage: 'Fetching terms failed. Please try another WiFi network.' })
+        }
     }
 
     onScroll = ({ nativeEvent }) => {
@@ -58,6 +63,7 @@ class SetupTerms extends Component {
           hasScrolled,
           isAtBottom,
           terms,
+          loadingMessage,
         } = this.state;
 
         return (
@@ -81,7 +87,7 @@ class SetupTerms extends Component {
                                 size='small'
                                 color='white'
                                 style={ Styles.setupTermsText }>
-                                { terms == "" ? 'Please wait...' : terms }
+                                { terms == "" ? loadingMessage : terms }
                             </X.Text>
                         </ScrollView>
                     </View>

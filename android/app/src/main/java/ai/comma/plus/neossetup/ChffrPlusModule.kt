@@ -150,12 +150,6 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun sendBroadcast(action: String) {
-        val intent = Intent(action)
-        currentActivity?.sendBroadcast(intent)
-    }
-
-    @ReactMethod
     fun getImei(promise: Promise) {
         try {
             val c = Class.forName("android.os.SystemProperties")
@@ -173,31 +167,6 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun setSshEnabled(enabled: Boolean) {
-        try {
-            val c = Class.forName("android.os.SystemProperties")
-            val set = c.getMethod("set", String::class.java, String::class.java)
-            set.invoke(c, "persist.neos.ssh", if (enabled) "1" else "0")
-        } catch(e: Exception) {
-            CloudLog.exception("NeosSetupReactModule.setSshEnabled", e)
-        }
-    }
-
-    @ReactMethod
-    fun getSerialNumber(promise: Promise) {
-        try {
-            val c = Class.forName("android.os.SystemProperties")
-            val get = c.getMethod("get", String::class.java, String::class.java)
-            val serialNo = get.invoke(c, "ro.serialno", "") as String
-            promise.resolve(serialNo)
-        } catch (e: Exception) {
-            CloudLog.exception("NeosSetupReactModule.getSerialNumber", e)
-            promise.reject("couldn't get serial number", e)
-        }
-
-    }
-
-    @ReactMethod
     fun openWifiSettings() {
         val intent = Intent(WifiManager.ACTION_PICK_WIFI_NETWORK)
         intent.putExtra("extra_prefs_show_button_bar", true)
@@ -205,66 +174,8 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun openBluetoothSettings() {
-        val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS)
-        intent.putExtra("extra_prefs_show_button_bar", true)
-        startActivityWithIntent(intent)
-    }
-
-    @ReactMethod
-    fun openTetheringSettings() {
-        val intent = Intent("android.intent.action.MAIN")
-        intent.component = ComponentName("com.android.settings", "com.android.settings.TetherSettings")
-        intent.putExtra("extra_prefs_show_button_bar", true)
-        startActivityWithIntent(intent)
-    }
-
-    @ReactMethod
-    fun openCellularSettings() {
-        val intent = Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS)
-        intent.putExtra("extra_prefs_show_button_bar", true)
-        startActivityWithIntent(intent)
-    }
-
-    @ReactMethod
-    fun openDateTimeSettings() {
-        val intent = Intent(Settings.ACTION_DATE_SETTINGS)
-        intent.putExtra("extra_prefs_show_button_bar", true)
-        startActivityWithIntent(intent)
-    }
-
-    @ReactMethod
-    fun reboot() {
-        try {
-            // IPowerManager.reboot(confirm=false, reason=0, wait=true)
-            Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 16 i32 0 i32 0 i32 1"))
-        } catch (e: IOException) {
-            CloudLog.exception("NeosSetupReactModule.reboot", e)
-        }
-    }
-
-    @ReactMethod
-    fun shutdown() {
-        try {
-            Runtime.getRuntime().exec(arrayOf("/system/bin/su", "-c", "service call power 17 i32 0 i32 1"))
-        } catch (e: IOException) {
-            CloudLog.exception("NeosSetupReactModule.shutdown", e)
-        }
-    }
-
-    @ReactMethod
     fun getSimState(promise: Promise) {
         promise.resolve(getCellState())
-    }
-
-    @ReactMethod
-    fun getBytesUsed(promise: Promise) {
-        val path = Environment.getDataDirectory()
-        val stat = StatFs(path.path)
-        val blockSize = stat.blockSizeLong
-        val availableBlocks = stat.availableBlocksLong
-
-        promise.resolve((availableBlocks * blockSize).toString())
     }
 
     @Throws(GeneralSecurityException::class)

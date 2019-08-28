@@ -8,7 +8,7 @@ import QRCode from 'react-native-qrcode-svg';
 import ChffrPlus from '../../native/ChffrPlus';
 import X from '../../themes';
 import Styles from './SetupPairStyles';
-import { updateConnectionState, refreshDeviceInfo } from '../../store/host/actions';
+import { updateConnectionState } from '../../store/host/actions';
 
 class SetupPair extends Component {
     static navigationOptions = {
@@ -28,9 +28,6 @@ class SetupPair extends Component {
     }
 
     componentDidMount() {
-        this.checkPaired = setInterval(() => {
-            this.props.refreshDeviceInfo();
-        }, 2500);
         NetInfo.isConnected.addEventListener('connectionChange', this.props.handleConnectionChange);
         NetInfo.isConnected.fetch().then(this.props.handleConnectionChange);
         ChffrPlus.createPairToken().then((pairToken) => {
@@ -145,7 +142,6 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch => ({
-    refreshDeviceInfo: () => dispatch(refreshDeviceInfo()),
     handleConnectionChange: (isConnected) => {
         dispatch(updateConnectionState(isConnected));
     },

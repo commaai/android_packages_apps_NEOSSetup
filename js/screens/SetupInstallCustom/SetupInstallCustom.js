@@ -47,6 +47,7 @@ class SetupInstallCustom extends Component {
                             ref={ ref => this.softwareUrlInput = ref }
                             style={ Styles.setupInstallCustomInput }
                             underlineColorAndroid='transparent'
+                            disableFullscreenUI={ true }
                         />
                     </View>
                     <View style={ Styles.setupInstallCustomButtons }>

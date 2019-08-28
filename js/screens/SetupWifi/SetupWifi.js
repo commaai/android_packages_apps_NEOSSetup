@@ -277,6 +277,7 @@ class SetupWifi extends Component {
                             value={ this.state.password }
                             secureTextEntry={ true }
                             ref={ ref => this.passwordInput = ref }
+                            disableFullscreenUI={ true }
                         />
                     </PopupDialog>
                     <View style={ Styles.setupWifiHeader }>

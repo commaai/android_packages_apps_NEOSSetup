@@ -11,7 +11,6 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         height: 40,
-        paddingTop: 10,
     },
     setupInstallCustomBody: {
         backgroundColor: 'rgba(3, 4, 4, 0.16)',

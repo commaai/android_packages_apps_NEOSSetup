@@ -35,7 +35,7 @@ class SetupTerms extends Component {
 
     async componentDidMount() {
         try {
-            const _terms = await fetch('https://chffrdist.blob.core.windows.net/setup/op_terms.json');
+            const _terms = await fetch('https://chffrdist.blob.core.windows.net/connect/terms.json?t=' + Date.now());
             const terms = await _terms.json();
             this.setState({ terms: terms.text });
             this.props.handleTermsVersionChanged(terms.version);

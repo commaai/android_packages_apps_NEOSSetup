@@ -59,7 +59,7 @@ export default (state = initialHostState, action) => {
         case ACTION_TERMS_VERSION_CHANGED:
             return {
                 ...state,
-                termsVersion: action.termsVersion,
+                termsVersion: action.termsVersion.toString(),
             }
         default:
             return state;

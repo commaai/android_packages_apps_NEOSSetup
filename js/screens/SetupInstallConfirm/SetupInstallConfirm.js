@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { Params } from '../../config';
 import ChffrPlus from '../../native/ChffrPlus';
 import X from '../../themes';
 import Styles from './SetupInstallConfirmStyles';
@@ -14,8 +13,8 @@ class SetupInstallConfirm extends Component {
     };
 
     componentDidMount() {
-        const { softwareUrl, termsVersion } = this.props;
-        this.props.handleSetupInstallConfirmCompleted(softwareUrl, termsVersion);
+        const { softwareUrl } = this.props;
+        this.props.handleSetupInstallConfirmCompleted(softwareUrl);
     }
 
     constructor(props) {
@@ -61,14 +60,13 @@ class SetupInstallConfirm extends Component {
 let mapStateToProps = function(state) {
     return {
         softwareUrl: state.host.softwareUrl,
-        termsVersion: state.host.termsVersion,
     }
 }
 
 
 const mapDispatchToProps = dispatch => ({
-    handleSetupInstallConfirmCompleted: (softwareUrl, termsVersion) => {
-        ChffrPlus.startInstaller(softwareUrl, termsVersion);
+    handleSetupInstallConfirmCompleted: (softwareUrl) => {
+        ChffrPlus.startInstaller(softwareUrl);
     },
     handleSetupInstallConfirmBackPressed: () => {
         dispatch(NavigationActions.reset({

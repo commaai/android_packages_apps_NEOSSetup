@@ -4,10 +4,6 @@ import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { updateTermsVersion } from '../../store/host/actions';
-import ChffrPlus from '../../native/ChffrPlus';
-import { Params } from '../../config';
-import Documents from './Documents';
 import X from '../../themes';
 import Styles from './SetupTermsStyles';
 
@@ -19,7 +15,6 @@ class SetupTerms extends Component {
     static propTypes = {
         handleSetupTermsCompleted: PropTypes.func,
         handleSetupTermsBackPressed: PropTypes.func,
-        updateTermsVersion: PropTypes.func,
     };
 
     constructor(props) {
@@ -38,7 +33,6 @@ class SetupTerms extends Component {
             const _terms = await fetch('https://chffrdist.blob.core.windows.net/connect/terms.json?t=' + Date.now());
             const terms = await _terms.json();
             this.setState({ terms: terms.text });
-            this.props.handleTermsVersionChanged(terms.version);
         } catch(error) {
             this.setState({ loadingMessage: 'Fetching terms failed. Please try another WiFi network.' })
         }
@@ -113,9 +107,6 @@ class SetupTerms extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    handleTermsVersionChanged: (termsVersion) => {
-        dispatch(updateTermsVersion(termsVersion));
-    },
     handleSetupTermsCompleted: async () => {
         dispatch(NavigationActions.reset({
             index: 0,

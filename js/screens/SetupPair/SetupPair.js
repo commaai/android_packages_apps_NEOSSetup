@@ -8,7 +8,7 @@ import QRCode from 'react-native-qrcode-svg';
 import ChffrPlus from '../../native/ChffrPlus';
 import X from '../../themes';
 import Styles from './SetupPairStyles';
-import { updateConnectionState } from '../../store/host/actions';
+import { setDeviceIds, updateConnectionState, updateDeviceIsPaired } from '../../store/host/actions';
 
 class SetupPair extends Component {
     static navigationOptions = {
@@ -27,7 +27,14 @@ class SetupPair extends Component {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        await this.props.setDeviceIds();
+        const { serial, imei } = this.props;
+        this.checkPaired = setInterval(async () => {
+            const _isPairedRequest = await fetch(`https://api.commadotai.com/v1/devices/is_paired_setup?serial=${ serial }&imei=${ imei }`);
+            const _isPairedJson = await _isPairedRequest.json();
+            this.props.handleDeviceIsPairedChanged(_isPairedJson.is_paired);
+        }, 2500);
         NetInfo.isConnected.addEventListener('connectionChange', this.props.handleConnectionChange);
         NetInfo.isConnected.fetch().then(this.props.handleConnectionChange);
         ChffrPlus.createPairToken().then((pairToken) => {
@@ -36,7 +43,7 @@ class SetupPair extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.isPaired) {
+        if (nextProps.deviceIsPaired) {
             this.props.handleSetupPairCompleted();
         }
     }
@@ -47,6 +54,7 @@ class SetupPair extends Component {
     }
 
     render() {
+        const { serial, imei, deviceIsPaired } = this.props;
         return (
             <X.Gradient
                 color='dark_black'>
@@ -61,13 +69,13 @@ class SetupPair extends Component {
                     </View>
                     <View style={ Styles.setupPairingBody }>
                         <View style={ Styles.setupPairingCode }>
-                            { this.state.pairToken ? (
+                            { this.state.pairToken && serial && imei ? (
                                 <QRCode
                                     value={ this.props.imei + '--' + this.props.serial + '--' + this.state.pairToken }
                                     size={ 250 } />
                             ) : (
                                 <ActivityIndicator
-                                    color='white'
+                                    color='#ACB7BD'
                                     refreshing={ true }
                                     size={ 37 }
                                     style={ Styles.setupPairingLoadingIndicator }/>
@@ -79,7 +87,7 @@ class SetupPair extends Component {
                                     <X.Text
                                         color='white'
                                         size='medium'>
-                                        { 'Download '}
+                                        { deviceIsPaired ? 'Successfully paired to an account in ' : 'Download '}
                                     </X.Text>
                                     <X.Text
                                         color='white'
@@ -87,11 +95,13 @@ class SetupPair extends Component {
                                         weight='bold'>
                                         { 'comma connect ' }
                                     </X.Text>
-                                    <X.Text
-                                        color='white'
-                                        size='medium'>
-                                        { 'and scan this code to pair.' }
-                                    </X.Text>
+                                    { deviceIsPaired ? null : (
+                                      <X.Text
+                                          color='white'
+                                          size='medium'>
+                                          { 'and scan this code to pair.' }
+                                      </X.Text>
+                                    ) }
                                 </X.Text>
                             </View>
                             <View style={ Styles.setupPairingIcons }>
@@ -116,12 +126,21 @@ class SetupPair extends Component {
                                     style={ Styles.setupPairingButtonsBack }>
                                     Go Back
                                 </X.Button>
-                                <X.Button
-                                    color='setupInverted'
-                                    onPress={ this.props.handleSetupPairSkipped }
-                                    style={ Styles.setupPairingButtonsContinue }>
-                                    Skip for Now
-                                </X.Button>
+                                { deviceIsPaired ? (
+                                    <X.Button
+                                        color='setupPrimary'
+                                        onPress={ this.props.handleSetupPairCompleted }
+                                        style={ Styles.setupPairingButtonsContinue }>
+                                        Continue
+                                    </X.Button>
+                                ) : (
+                                    <X.Button
+                                        color='setupInverted'
+                                        onPress={ this.props.handleSetupPairSkipped }
+                                        style={ Styles.setupPairingButtonsContinue }>
+                                        Skip for Now
+                                    </X.Button>
+                                ) }
                             </View>
                         </View>
                     </View>
@@ -136,12 +155,18 @@ function mapStateToProps(state) {
     return {
         imei: state.host.imei,
         serial: state.host.serial,
-        isPaired: state.host.device && state.host.device.is_paired,
+        deviceIsPaired: state.host.deviceIsPaired,
         isConnected: state.host.isConnected,
     }
 }
 
 const mapDispatchToProps = dispatch => ({
+    setDeviceIds: () => {
+        return dispatch(setDeviceIds());
+    },
+    handleDeviceIsPairedChanged: (deviceIsPaired) => {
+        dispatch(updateDeviceIsPaired(deviceIsPaired));
+    },
     handleConnectionChange: (isConnected) => {
         dispatch(updateConnectionState(isConnected));
     },

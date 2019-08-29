@@ -5,10 +5,10 @@ import ChffrPlus from '../../native/ChffrPlus';
 export const ACTION_SIM_STATE_CHANGED = 'ACTION_SIM_STATE_CHANGED';
 export const ACTION_CONNECTION_STATUS_CHANGED = 'ACTION_CONNECTION_STATUS_CHANGED';
 export const ACTION_WIFI_STATE_CHANGED = 'ACTION_WIFI_STATE_CHANGED';
-export const ACTION_DEVICE_IDS_AVAILABLE = 'ACTION_DEVICE_IDS_AVAILABLE';
-export const ACTION_DEVICE_REFRESHED = 'ACTION_DEVICE_REFRESHED';
+export const ACTION_DEVICE_IDS_CHANGED = 'ACTION_DEVICE_IDS_CHANGED';
 export const ACTION_SOFTWARE_URL_CHANGED = 'ACTION_SOFTWARE_URL_CHANGED';
-export const ACTION_TERMS_VERSION_CHANGED = 'ACTION_TERMS_VERSION_CHANGED';
+export const ACTION_DEVICE_IS_PAIRED_CHANGED = 'ACTION_DEVICE_IS_PAIRED_CHANGED';
+
 
 export function updateWifiState() {
     return async dispatch => {
@@ -42,39 +42,23 @@ export function updateConnectionState(status) {
 }
 
 export function setDeviceIds() {
-    return async dispatch => {
+    return async (dispatch, getState) => {
         const imei = await ChffrPlus.getImei();
         const serial = await ChffrPlus.getSerialNumber();
-        const deviceJwt = await ChffrPlus.readParam("AccessToken");
-        await Request.configure(deviceJwt);
-
         dispatch({
-            type: ACTION_DEVICE_IDS_AVAILABLE,
+            type: ACTION_DEVICE_IDS_CHANGED,
             imei,
             serial,
-            deviceJwt,
         });
     }
 }
 
-export function refreshDeviceInfo() {
+export function updateDeviceIsPaired(deviceIsPaired) {
     return async (dispatch, getState) => {
-        const dongleId = await ChffrPlus.readParam("DongleId");
-        const device =  await Devices.fetchDevice(dongleId);
-
         dispatch({
-            type: ACTION_DEVICE_REFRESHED,
-            device,
-        })
-    }
-}
-
-export function resetSoftwareUrl() {
-    return (dispatch, getState) => {
-        dispatch({
-            type: ACTION_SOFTWARE_URL_CHANGED,
-            softwareUrl: 'https://',
-        })
+            type: ACTION_DEVICE_IS_PAIRED_CHANGED,
+            deviceIsPaired,
+        });
     }
 }
 
@@ -83,15 +67,6 @@ export function updateSoftwareUrl(softwareUrl) {
         dispatch({
             type: ACTION_SOFTWARE_URL_CHANGED,
             softwareUrl,
-        })
-    }
-}
-
-export function updateTermsVersion(termsVersion) {
-    return (dispatch, getState) => {
-        dispatch({
-            type: ACTION_TERMS_VERSION_CHANGED,
-            termsVersion,
         })
     }
 }

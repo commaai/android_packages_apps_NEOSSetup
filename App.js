@@ -16,7 +16,6 @@ import {
     updateSimState,
     updateWifiState,
     setDeviceIds,
-    refreshDeviceInfo,
 } from './js/store/host/actions';
 
 import { Sentry } from 'react-native-sentry';
@@ -43,7 +42,7 @@ export default class App extends Component {
 
     async onBeforeLift() {
         // Called after store is rehydrated from disk
-        this.store.dispatch(setDeviceIds()).then(() => this.store.dispatch(refreshDeviceInfo()));
+        await this.store.dispatch(setDeviceIds());
         SimStateListener.register(this.store.dispatch);
         WifiStateListener.register(this.store.dispatch);
     }

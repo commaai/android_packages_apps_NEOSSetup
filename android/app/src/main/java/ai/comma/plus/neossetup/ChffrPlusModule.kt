@@ -114,7 +114,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
                 outStream.close()
 
                 File(tmpPath).renameTo(File(outputPath))
-                result = params[1]
+                result = "1"
                 return result
             } catch (ex: Exception) {
                 Log.d("neossetup", "Error in doInBackground " + ex.message)
@@ -144,9 +144,9 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun startInstaller(link: String, termsVersion: String) {
+    fun startInstaller(link: String) {
         Log.d("neossetup installer", link);
-        DownloadApp(this).execute(link, termsVersion)
+        DownloadApp(this).execute(link)
     }
 
     @ReactMethod
@@ -163,6 +163,19 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
         } catch (e: Exception) {
             CloudLog.exception("NeosSetupReactModule.getImei", e)
             promise.reject("couldn't get imei", e)
+        }
+    }
+
+    @ReactMethod
+    fun getSerialNumber(promise: Promise) {
+        try {
+            val c = Class.forName("android.os.SystemProperties")
+            val get = c.getMethod("get", String::class.java, String::class.java)
+            val serialNo = get.invoke(c, "ro.serialno", "") as String
+            promise.resolve(serialNo)
+        } catch (e: Exception) {
+            CloudLog.exception("NeosSetupReactModule.getSerialNumber", e)
+            promise.reject("couldn't get serial number", e)
         }
     }
 

@@ -4,8 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import ChffrPlus from '../../native/ChffrPlus';
-import { updateSoftwareUrl, resetSoftwareUrl } from '../../store/host/actions';
+import { updateSoftwareUrl } from '../../store/host/actions';
 import { Constants } from '../../config';
 import X from '../../themes';
 import Styles from './SetupInstallCustomStyles';
@@ -17,12 +16,13 @@ class SetupInstallCustom extends Component {
 
     static propTypes = {
         softwareUrl: PropTypes.string,
+        handleSoftwareUrlChanged: PropTypes.func,
         handleSetupInstallCustomCompleted: PropTypes.func,
         handleSetupInstallCustomBackPressed: PropTypes.func,
     };
 
     componentDidMount() {
-        this.props.handleSoftwareUrlReset();
+        this.props.handleSoftwareUrlChanged(Constants.INITIAL_SOFTWARE_URL);
     }
 
     render() {
@@ -59,7 +59,7 @@ class SetupInstallCustom extends Component {
                         </X.Button>
                         <X.Button
                             color={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? 'setupPrimary' : 'setupDisabled' }
-                            onPress={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? this.props.handleSetupInstallCompleted : null }
+                            onPress={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? this.props.handleSetupInstallCustomCompleted : null }
                             style={ Styles.setupInstallCustomButtonsContinue }>
                             <X.Text
                                 color={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? 'white' : 'setupDisabled' }
@@ -81,13 +81,10 @@ let mapStateToProps = function(state) {
 }
 
 const mapDispatchToProps = dispatch => ({
-    handleSoftwareUrlReset: () => {
-        dispatch(resetSoftwareUrl());
-    },
     handleSoftwareUrlChanged: (softwareUrl) => {
         dispatch(updateSoftwareUrl(softwareUrl));
     },
-    handleSetupInstallCompleted: async () => {
+    handleSetupInstallCustomCompleted: async () => {
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,

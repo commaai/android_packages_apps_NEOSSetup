@@ -4,9 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import ChffrPlus from '../../native/ChffrPlus';
 import { updateSoftwareUrl } from '../../store/host/actions';
-import { Params } from '../../config';
 import X from '../../themes';
 import Styles from './SetupInstallStyles';
 
@@ -16,6 +14,7 @@ class SetupInstall extends Component {
     };
 
     static propTypes = {
+        handleSoftwareUrlChanged: PropTypes.func,
         handleSetupInstallCompleted: PropTypes.func,
         handleSetupInstallBackPressed: PropTypes.func,
     };

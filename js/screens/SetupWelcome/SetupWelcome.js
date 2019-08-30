@@ -5,13 +5,23 @@ import { connect } from 'react-redux';
 
 import X from '../../themes';
 import Styles from './SetupWelcomeStyles';
+import { updateHasDataConnection } from '../../store/host/actions';
 
 class SetupWelcome extends Component {
     static navigationOptions = {
         header: null,
     };
 
+    componentWillMount() {
+        fetch('https://api.commadotai.com/me').then(() => {
+            this.props.updateHasDataConnection(true);
+        }).catch(() => {
+            this.props.updateHasDataConnection(false);
+        })
+    }
+
     render() {
+        const { hasDataConnection } = this.props;
         return (
             <X.Gradient
                 color='dark_black'
@@ -33,7 +43,7 @@ class SetupWelcome extends Component {
                         <X.Button
                             color='setupPrimary'
                             size='big'
-                            onPress={ this.props.navigateToSetup }>
+                            onPress={ () => this.props.navigateToSetup(hasDataConnection) }>
                             Continue to Setup
                         </X.Button>
                     </View>
@@ -43,18 +53,28 @@ class SetupWelcome extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        hasDataConnection: state.host.hasDataConnection,
+    }
+}
+
 const mapDispatchToProps = dispatch => ({
-    navigateToSetup: () => {
+    updateHasDataConnection: (hasDataConnection) => {
+        dispatch(updateHasDataConnection(hasDataConnection));
+    },
+    navigateToSetup: (hasDataConnection) => {
+        const routeName = hasDataConnection ? 'SetupTerms' : 'SetupWifi';
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName: 'SetupWifi',
+                    routeName,
                 })
             ]
         }))
     }
 });
 
-export default connect(null, mapDispatchToProps)(SetupWelcome);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupWelcome);

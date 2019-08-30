@@ -1,6 +1,7 @@
 import {
     ACTION_SIM_STATE_CHANGED,
     ACTION_CONNECTION_STATUS_CHANGED,
+    ACTION_HAS_DATA_CONNECTION_CHANGED,
     ACTION_WIFI_STATE_CHANGED,
     ACTION_DEVICE_IDS_CHANGED,
     ACTION_SOFTWARE_URL_CHANGED,
@@ -12,6 +13,7 @@ import { Constants } from '../../config';
 const initialHostState = {
     simState: SimState.UNKNOWN,
     isConnected: false,
+    hasDataConnection: false,
     wifiState: {},
     imei: null,
     serial: null,
@@ -30,6 +32,11 @@ export default (state = initialHostState, action) => {
             return {
                 ...state,
                 isConnected: action.isConnected,
+            }
+        case ACTION_HAS_DATA_CONNECTION_CHANGED:
+            return {
+                ...state,
+                hasDataConnection: action.hasDataConnection,
             }
         case ACTION_WIFI_STATE_CHANGED:
             return {

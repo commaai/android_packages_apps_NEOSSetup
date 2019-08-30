@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 import X from '../../themes';
 import Styles from './SetupTermsStyles';
+import { updateHasDataConnection } from '../../store/host/actions';
 
 class SetupTerms extends Component {
     static navigationOptions = {
@@ -33,8 +34,10 @@ class SetupTerms extends Component {
             const _terms = await fetch('https://chffrdist.blob.core.windows.net/connect/terms.json?t=' + Date.now());
             const terms = await _terms.json();
             this.setState({ terms: terms.text });
+            this.props.updateHasDataConnection(true);
         } catch(error) {
-            this.setState({ loadingMessage: 'Fetching terms failed. Please try another WiFi network.' })
+            this.props.updateHasDataConnection(false);
+            this.setState({ loadingMessage: 'Fetching terms failed. Please go back to try another WiFi network.' })
         }
     }
 
@@ -59,6 +62,7 @@ class SetupTerms extends Component {
           terms,
           loadingMessage,
         } = this.state;
+        const { hasDataConnection } = this.props;
 
         return (
             <X.Gradient
@@ -88,7 +92,7 @@ class SetupTerms extends Component {
                     <View style={ Styles.setupTermsButtons }>
                         <X.Button
                             color='setupInverted'
-                            onPress={ this.props.handleSetupTermsBackPressed }
+                            onPress={ () => this.props.handleSetupTermsBackPressed(hasDataConnection) }
                             style={ Styles.setupTermsButtonsDecline }>
                             { 'Go back' }
                         </X.Button>
@@ -106,7 +110,16 @@ class SetupTerms extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        hasDataConnection: state.host.hasDataConnection,
+    }
+}
+
 const mapDispatchToProps = dispatch => ({
+    updateHasDataConnection: (hasDataConnection) => {
+        dispatch(updateHasDataConnection(hasDataConnection));
+    },
     handleSetupTermsCompleted: async () => {
         dispatch(NavigationActions.reset({
             index: 0,
@@ -118,17 +131,18 @@ const mapDispatchToProps = dispatch => ({
             ]
         }))
     },
-    handleSetupTermsBackPressed: () => {
+    handleSetupTermsBackPressed: (hasDataConnection) => {
+        const routeName = hasDataConnection ? 'SetupWelcome' : 'SetupWifi';
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName: 'SetupWifi',
+                    routeName,
                 })
             ]
         }))
     },
 });
 
-export default connect(null, mapDispatchToProps)(SetupTerms);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupTerms);

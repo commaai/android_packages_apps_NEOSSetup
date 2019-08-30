@@ -8,6 +8,7 @@ export const ACTION_WIFI_STATE_CHANGED = 'ACTION_WIFI_STATE_CHANGED';
 export const ACTION_DEVICE_IDS_CHANGED = 'ACTION_DEVICE_IDS_CHANGED';
 export const ACTION_SOFTWARE_URL_CHANGED = 'ACTION_SOFTWARE_URL_CHANGED';
 export const ACTION_DEVICE_IS_PAIRED_CHANGED = 'ACTION_DEVICE_IS_PAIRED_CHANGED';
+export const ACTION_HAS_DATA_CONNECTION_CHANGED = 'ACTION_HAS_DATA_CONNECTION_CHANGED';
 
 
 export function updateWifiState() {
@@ -37,6 +38,15 @@ export function updateConnectionState(status) {
         dispatch({
             type: ACTION_CONNECTION_STATUS_CHANGED,
             isConnected: status,
+        });
+    }
+}
+
+export function updateHasDataConnection(hasDataConnection) {
+    return function (dispatch) {
+        dispatch({
+            type: ACTION_HAS_DATA_CONNECTION_CHANGED,
+            hasDataConnection,
         });
     }
 }

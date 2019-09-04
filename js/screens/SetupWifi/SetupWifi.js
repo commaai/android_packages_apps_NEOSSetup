@@ -251,7 +251,7 @@ class SetupWifi extends Component {
                         width={ 0.75 }
                         height={ 0.5 }
                         dialogStyle={ Styles.passwordDialog }
-                        haveOverlay={ false }
+                        haveOverlay={ true }
                         dismissOnTouchOutside={ true }
                         actions={ [
                             <View key="dialog_buttons" style={ { flexDirection: 'row' } }>

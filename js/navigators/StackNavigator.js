@@ -15,8 +15,8 @@ import SetupInstallCustom from '../screens/SetupInstallCustom';
 import SetupInstallConfirm from '../screens/SetupInstallConfirm';
 
 export const StackNavigator = RNStackNavigator({
-    SetupWelcome: { screen: SetupWelcome },
     SetupWifi: { screen: SetupWifi },
+    SetupWelcome: { screen: SetupWelcome },
     SetupTerms: { screen: SetupTerms },
     SetupPair: { screen: SetupPair },
     SetupInstall: { screen: SetupInstall },

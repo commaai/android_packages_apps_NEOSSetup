@@ -15,7 +15,7 @@ export default StyleSheet.create({
     },
     setupTermsScroll: {
         backgroundColor: 'rgba(3, 4, 4, 0.16)',
-        borderColor: '#1D2225',
+        borderColor: '#272D30',
         borderWidth: 1,
         borderRadius: 13,
         flex: 0.65,

@@ -18,7 +18,7 @@ export default StyleSheet.create({
     },
     setupWifiNetworks: {
         backgroundColor: 'rgba(3, 4, 4, 0.16)',
-        borderColor: '#1D2225',
+        borderColor: '#272D30',
         borderWidth: 1,
         borderRadius: 13,
         flex: 0.65,
@@ -26,7 +26,7 @@ export default StyleSheet.create({
     setupWifiNetwork: {
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: '#1D2225',
+        borderBottomColor: '#272D30',
         flexDirection: 'row',
         height: 65,
         paddingTop: 10,
@@ -85,8 +85,7 @@ export default StyleSheet.create({
     },
     passwordDialog: {
         padding: 20,
-        marginTop: -100,
-        marginLeft: -25,
+        marginTop: -80,
     },
     dialogButton: {
         flex: 0.4,

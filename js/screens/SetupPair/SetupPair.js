@@ -37,7 +37,7 @@ class SetupPair extends Component {
         }, 2500);
         NetInfo.isConnected.addEventListener('connectionChange', this.props.handleConnectionChange);
         NetInfo.isConnected.fetch().then(this.props.handleConnectionChange);
-        ChffrPlus.createPairToken().then((pairToken) => {
+        ChffrPlus.createJwt({ pair: true }).then((pairToken) => {
             this.setState({ pairToken });
         });
     }

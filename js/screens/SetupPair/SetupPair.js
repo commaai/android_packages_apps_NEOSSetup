@@ -70,9 +70,21 @@ class SetupPair extends Component {
                     <View style={ Styles.setupPairingBody }>
                         <View style={ Styles.setupPairingCode }>
                             { this.state.pairToken && serial && imei ? (
-                                <QRCode
-                                    value={ this.props.imei + '--' + this.props.serial + '--' + this.state.pairToken }
-                                    size={ 250 } />
+                                <View style={ Styles.setupPairingCodeWrapper }>
+                                    { deviceIsPaired ? (
+                                      <View style={ Styles.setupPairingCodeOverlay }>
+                                          <View style={ Styles.setupPairingCodeOverlayCheckmark }>
+                                              <X.Image
+                                                  source={ require('../../img/icon_checkmark.png') }
+                                                  style={ Styles.setupPairingCodeOverlayCheckmarkIcon }
+                                                  tintColor='#178644' />
+                                          </View>
+                                      </View>
+                                    ) : null }
+                                    <QRCode
+                                        value={ this.props.imei + '--' + this.props.serial + '--' + this.state.pairToken }
+                                        size={ 250 } />
+                                </View>
                             ) : (
                                 <ActivityIndicator
                                     color='#ACB7BD'

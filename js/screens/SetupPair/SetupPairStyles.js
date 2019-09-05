@@ -26,6 +26,33 @@ export default StyleSheet.create({
         height: 260,
         width: 260,
     },
+    setupPairingCodeWrapper: {
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+    },
+    setupPairingCodeOverlay: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#17864495',
+        position: 'absolute',
+        height: '100%',
+        width: '100%',
+        zIndex: 10,
+    },
+    setupPairingCodeOverlayCheckmark: {
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        borderColor: '#178644',
+        borderRadius: 100,
+        borderWidth: 8,
+        height: 200,
+        justifyContent: 'center',
+        width: 200,
+    },
+    setupPairingCodeOverlayCheckmarkIcon: {
+        width: 110,
+    },
     setupPairingContext: {
         flex: 1,
         padding: 30,

@@ -86,7 +86,7 @@ class SetupInstall extends Component {
                             color='setupInverted'
                             onPress={ this.props.handleSetupInstallBackPressed }
                             style={ Styles.setupInstallButtonsBack }>
-                            Go back
+                            Go Back
                         </X.Button>
                         <X.Button
                             color={ selectedOption !== '' ? 'setupPrimary' : 'setupDisabled' }

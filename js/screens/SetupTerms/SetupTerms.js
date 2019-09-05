@@ -94,7 +94,7 @@ class SetupTerms extends Component {
                             color='setupInverted'
                             onPress={ () => this.props.handleSetupTermsBackPressed(hasDataConnection) }
                             style={ Styles.setupTermsButtonsDecline }>
-                            { 'Go back' }
+                            { 'Go Back' }
                         </X.Button>
                         <X.Button
                             color={ isAtBottom ? 'setupPrimary' : 'setupDefault'}

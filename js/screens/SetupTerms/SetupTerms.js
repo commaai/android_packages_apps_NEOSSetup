@@ -62,7 +62,6 @@ class SetupTerms extends Component {
           terms,
           loadingMessage,
         } = this.state;
-        const { hasDataConnection } = this.props;
 
         return (
             <X.Gradient
@@ -92,12 +91,12 @@ class SetupTerms extends Component {
                     <View style={ Styles.setupTermsButtons }>
                         <X.Button
                             color='setupInverted'
-                            onPress={ () => this.props.handleSetupTermsBackPressed(hasDataConnection) }
+                            onPress={ this.props.handleSetupTermsBackPressed }
                             style={ Styles.setupTermsButtonsDecline }>
                             { 'Go Back' }
                         </X.Button>
                         <X.Button
-                            color={ isAtBottom ? 'setupPrimary' : 'setupDefault'}
+                            color={ isAtBottom ? 'setupPrimary' : 'setupDefault' }
                             onPress={ isAtBottom ? this.props.handleSetupTermsCompleted : null }
                             style={ Styles.setupTermsButtonsAccept }>
                             { isAtBottom ? 'I agree to the terms' : 'Read to Continue' }
@@ -107,12 +106,6 @@ class SetupTerms extends Component {
             </X.Gradient>
         );
 
-    }
-}
-
-function mapStateToProps(state) {
-    return {
-        hasDataConnection: state.host.hasDataConnection,
     }
 }
 
@@ -131,18 +124,17 @@ const mapDispatchToProps = dispatch => ({
             ]
         }))
     },
-    handleSetupTermsBackPressed: (hasDataConnection) => {
-        const routeName = hasDataConnection ? 'SetupWelcome' : 'SetupWifi';
+    handleSetupTermsBackPressed: () => {
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName,
+                    routeName: 'SetupWifi',
                 })
             ]
         }))
     },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SetupTerms);
+export default connect(null, mapDispatchToProps)(SetupTerms);

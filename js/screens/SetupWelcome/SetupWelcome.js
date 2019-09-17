@@ -21,7 +21,6 @@ class SetupWelcome extends Component {
     }
 
     render() {
-        const { hasDataConnection } = this.props;
         return (
             <X.Gradient
                 color='dark_black'
@@ -43,7 +42,7 @@ class SetupWelcome extends Component {
                         <X.Button
                             color='setupPrimary'
                             size='big'
-                            onPress={ () => this.props.navigateToSetup(hasDataConnection) }>
+                            onPress={ this.props.navigateToSetup }>
                             Continue to Setup
                         </X.Button>
                     </View>
@@ -53,28 +52,21 @@ class SetupWelcome extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        hasDataConnection: state.host.hasDataConnection,
-    }
-}
-
 const mapDispatchToProps = dispatch => ({
     updateHasDataConnection: (hasDataConnection) => {
         dispatch(updateHasDataConnection(hasDataConnection));
     },
-    navigateToSetup: (hasDataConnection) => {
-        const routeName = hasDataConnection ? 'SetupTerms' : 'SetupWifi';
+    navigateToSetup: () => {
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName,
+                    routeName: 'SetupWifi',
                 })
             ]
         }))
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SetupWelcome);
+export default connect(null, mapDispatchToProps)(SetupWelcome);

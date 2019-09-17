@@ -83,12 +83,49 @@ export default StyleSheet.create({
         justifyContent: 'center',
         width: 320,
     },
-    passwordDialog: {
+    setupWifiPasswordDialog: {
         padding: 20,
-        marginTop: -80,
+        marginTop: -140,
+        width: 540,
     },
-    dialogButton: {
-        flex: 0.4,
+    setupWifiPasswordInputRow: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 60,
+        paddingTop: 10,
+    },
+    setupWifiPasswordInputLabel: {
+        paddingRight: 10,
+        width: 90,
+    },
+    setupWifiPasswordInputLabelText: {
+    },
+    setupWifiPasswordInputField: {
+        backgroundColor: '#EEF0F1',
+        borderColor: '#80909A',
+        borderRadius: 8,
+        borderWidth: 1,
+        flexGrow: 1,
+        height: 40,
+    },
+    setupWifiPasswordInputFieldFocused: {
+        borderColor: '#258FDA',
+    },
+    setupWifiPasswordDialogCheckbox: {
+        width: 200,
+    },
+    setupWifiPasswordDialogButtons: {
+        justifyContent: 'flex-end',
+        flexDirection: 'row',
+        height: 160,
+        paddingTop: 10,
+    },
+    setupWifiPasswordDialogButton: {
+        alignItems: 'center',
+        display: 'flex',
+        justifyContent: 'center',
+        marginLeft: 10,
+        width: 140,
     },
     setupWifiConnectingIndicator: {
         height: 26,

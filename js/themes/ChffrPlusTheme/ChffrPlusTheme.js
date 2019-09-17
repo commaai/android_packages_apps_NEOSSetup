@@ -26,6 +26,8 @@ export let ChffrPlusTheme = {
         colors: {
             setupDisabled: '#1D2225',
             lightGrey200: '#ACB7BD',
+            whiteFieldLabel: '#49545B',
+            lightGrey700: '#758791',
         },
     },
     button: {
@@ -49,6 +51,11 @@ export let ChffrPlusTheme = {
                 borderRadius: 13,
                 borderWidth: 1,
             },
+            setupInvertedLight: {
+                borderColor: '#ACB7BD',
+                borderRadius: 13,
+                borderWidth: 1,
+            },
             setupDisabled: {
                 backgroundColor: '#0B0E0E',
                 borderRadius: 13,
@@ -67,6 +74,20 @@ export let ChffrPlusTheme = {
         sizes: {
             medium: 40,
             mediumLabel: 18,
+        },
+    },
+    checkboxField: {
+        sizes: {
+            tiny: 20,
+            tinyLabel: 14,
+        },
+        colors: {
+            dark: {
+                input: '#EEF0F1',
+                inputBorder: '#80909A',
+                inputChecked: '#175886',
+                label: '#758791',
+            },
         },
     },
     gradient: {

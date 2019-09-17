@@ -48,6 +48,7 @@ class SetupWifi extends Component {
             connectedNetworkSsid: null,
             connectingNetwork: null,
             password: '',
+            showPassword: false,
         };
 
         this.updateAvailableNetworks = this.updateAvailableNetworks.bind(this);
@@ -55,7 +56,6 @@ class SetupWifi extends Component {
 
     componentWillMount() {
         this.refreshNetworks();
-
         DeviceEventEmitter.addListener('onWifiStateChange', this.onWifiStateChange);
     }
 
@@ -114,7 +114,7 @@ class SetupWifi extends Component {
     connectToNetwork = (network, password) => {
         try {
             WifiModule.connect(network.ssid, password || null);
-            this.setState({ connectingNetwork: network});
+            this.setState({ connectingNetwork: network });
         } catch(err) {
             this.setState({ connectingNetwork: null });
             if (err.code === 'E_WIFI_ERR') {
@@ -137,11 +137,12 @@ class SetupWifi extends Component {
                 // Already connected
                 this.setState({ connectedNetworkSsid: ssid }, this.updateAvailableNetworks);
             } else {
-                this.setState({ connectingNetwork: network}, () => {
+                this.setState({ connectingNetwork: network }, () => {
                     if (network.security === SECURITY_UNSECURED) {
                         this.connectToNetwork(network);
                     } else {
                         this.popupDialog.show();
+                        this.passwordInput.focus();
                     }
                 });
             }
@@ -154,22 +155,24 @@ class SetupWifi extends Component {
 
         this.popupDialog.dismiss();
         this.connectToNetwork(connectingNetwork, password);
+        Keyboard.dismiss();
     }
 
     onDismissPasswordPrompt = () => {
+        Keyboard.dismiss();
         this.popupDialog.dismiss();
         this.setState({ connectingNetwork: null });
     }
 
     renderNetwork = ({ item }) => {
         const { connectedNetworkSsid, connectingNetwork } = this.state;
-
         const isConnected = item.ssid === connectedNetworkSsid;
         const isConnecting = connectingNetwork && item.ssid === connectingNetwork.ssid;
 
         return (
             <TouchableOpacity
                 key={ item.ssid }
+                activeOpacity={ 0.8 }
                 onPress={ () => this.onTapToConnect(item) }>
                 <View style={ Styles.setupWifiNetwork } key={ item.ssid }>
                     <Image
@@ -236,10 +239,15 @@ class SetupWifi extends Component {
         );
     }
 
+    handleShowPasswordToggled = () => {
+        this.setState({ showPassword: !this.state.showPassword });
+    }
+
     keyExtractor = item => item.ssid;
 
     render() {
-        const { connectedNetworkSsid, showPasswordPrompt } = this.state;
+        const { connectingNetwork, connectedNetworkSsid, showPassword } = this.state;
+        const { hasDataConnection } = this.props;
 
         return (
             <X.Gradient
@@ -248,37 +256,74 @@ class SetupWifi extends Component {
                     <PopupDialog
                         onDismissed={ this.onDismissPasswordPrompt }
                         ref={ (ref) => this.popupDialog = ref }
-                        width={ 0.75 }
                         height={ 0.5 }
-                        dialogStyle={ Styles.passwordDialog }
+                        dialogStyle={ Styles.setupWifiPasswordDialog }
                         haveOverlay={ true }
-                        dismissOnTouchOutside={ true }
+                        dismissOnTouchOutside={ false }
                         actions={ [
-                            <View key="dialog_buttons" style={ { flexDirection: 'row' } }>
-                                <DialogButton
-                                    key="cancel"
-                                    text="Cancel"
-                                    align="center"
-                                    buttonStyle={ Styles.dialogButton }
-                                    onPress={ this.onDismissPasswordPrompt }/>
-                                <DialogButton
-                                    key="connect"
-                                    text="Connect"
-                                    align="center"
-                                    buttonStyle={ Styles.dialogButton }
-                                    onPress={ this.onPasswordPromptConnectPressed }/>
+                            <View
+                                key="dialog_buttons"
+                                style={ Styles.setupWifiPasswordDialogButtons }>
+                                <View style={ Styles.setupWifiPasswordDialogCheckbox }>
+                                    <X.CheckboxField
+                                        size='tiny'
+                                        color='dark'
+                                        isChecked={ showPassword }
+                                        onPress={ this.handleShowPasswordToggled }
+                                        label='Show password' />
+                                </View>
+                                <X.Button
+                                    key='cancel'
+                                    size='small'
+                                    color='setupInvertedLight'
+                                    onPress={ this.onDismissPasswordPrompt }
+                                    style={ Styles.setupWifiPasswordDialogButton }>
+                                    <X.Text
+                                        color='lightGrey700'
+                                        size='small'
+                                        weight='semibold'>
+                                        Cancel
+                                    </X.Text>
+                                </X.Button>
+                                <X.Button
+                                    key='connect'
+                                    size='small'
+                                    color='setupPrimary'
+                                    onPress={ () => this.onPasswordPromptConnectPressed() }
+                                    style={ Styles.setupWifiPasswordDialogButton }>
+                                    <X.Text
+                                        color='white'
+                                        size='small'
+                                        weight='semibold'>
+                                        Connect
+                                    </X.Text>
+                                </X.Button>
                             </View>
                         ] }>
-                        <X.Text>
-                            Password
+                        <X.Text
+                            size='small'
+                            weight='semibold'>
+                            The network "{ connectingNetwork ? connectingNetwork.ssid : '' }" requires a password.
                         </X.Text>
-                        <TextInput
-                            onChangeText={ (password) => this.setState({ password }) }
-                            value={ this.state.password }
-                            secureTextEntry={ true }
-                            ref={ ref => this.passwordInput = ref }
-                            disableFullscreenUI={ true }
-                        />
+                        <View style={ Styles.setupWifiPasswordInputRow }>
+                            <View style={ Styles.setupWifiPasswordInputLabel }>
+                                <X.Text
+                                    size='small'
+                                    color='whiteFieldLabel'
+                                    style={ Styles.setupWifiPasswordInputLabelText }>
+                                    Password:
+                                </X.Text>
+                            </View>
+                            <TextInput
+                                onChangeText={ (password) => this.setState({ password }) }
+                                value={ this.state.password }
+                                secureTextEntry={ !showPassword }
+                                ref={ ref => this.passwordInput = ref }
+                                disableFullscreenUI={ true }
+                                style={ Styles.setupWifiPasswordInputField }
+                                underlineColorAndroid='transparent'
+                                autoCorrect={ false } />
+                        </View>
                     </PopupDialog>
                     <View style={ Styles.setupWifiHeader }>
                         <X.Text
@@ -318,19 +363,26 @@ class SetupWifi extends Component {
                             Go Back
                         </X.Button>
                         <X.Button
-                            color={ connectedNetworkSsid ? 'setupPrimary' : 'setupDisabled' }
-                            onPress={ connectedNetworkSsid ? this.props.handleSetupWifiCompleted : null }
+                            color={ connectedNetworkSsid ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
+                            onPress={ connectedNetworkSsid || hasDataConnection ? this.props.handleSetupWifiCompleted : null }
                             style={ Styles.setupWifiContinueButton }>
                             <X.Text
-                                color={ connectedNetworkSsid ? 'white' : 'setupDisabled' }
+                                color={ connectedNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
                                 weight='semibold'>
-                                Continue
+                                { hasDataConnection && !connectedNetworkSsid ? 'Skip' : 'Continue' }
                             </X.Text>
                         </X.Button>
                     </View>
                 </X.Entrance>
             </X.Gradient>
         );
+    }
+}
+
+
+function mapStateToProps(state) {
+    return {
+        hasDataConnection: state.host.hasDataConnection,
     }
 }
 
@@ -364,4 +416,4 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-export default connect(null, mapDispatchToProps)(SetupWifi);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupWifi);

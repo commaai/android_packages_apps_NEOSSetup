@@ -346,7 +346,8 @@ class SetupWifi extends Component {
                                 disableFullscreenUI={ true }
                                 style={ Styles.setupWifiPasswordInputField }
                                 underlineColorAndroid='transparent'
-                                autoCorrect={ false } />
+                                keyboardType={ showPassword ? 'email-address' : null }
+                            />
                         </View>
                     </PopupDialog>
                     <View style={ Styles.setupWifiHeader }>

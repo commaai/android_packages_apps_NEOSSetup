@@ -48,6 +48,7 @@ class SetupInstallCustom extends Component {
                             style={ Styles.setupInstallCustomInput }
                             underlineColorAndroid='transparent'
                             disableFullscreenUI={ true }
+                            keyboardType='email-address'
                         />
                     </View>
                     <View style={ Styles.setupInstallCustomButtons }>

@@ -99,7 +99,7 @@ class SetupTerms extends Component {
                             color={ isAtBottom ? 'setupPrimary' : 'setupDefault' }
                             onPress={ isAtBottom ? this.props.handleSetupTermsCompleted : null }
                             style={ Styles.setupTermsButtonsAccept }>
-                            { isAtBottom ? 'I agree to the terms' : 'Read to Continue' }
+                            { isAtBottom ? 'Accept Terms and Conditions' : 'Read to Continue' }
                         </X.Button>
                     </View>
                 </X.Entrance>

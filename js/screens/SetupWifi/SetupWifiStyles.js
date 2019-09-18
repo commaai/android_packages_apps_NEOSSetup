@@ -23,6 +23,9 @@ export default StyleSheet.create({
         borderRadius: 13,
         flex: 0.65,
     },
+    setupWifiNetworksEmpty: {
+        padding: 20,
+    },
     setupWifiNetwork: {
         alignItems: 'center',
         borderBottomWidth: 1,

@@ -45,10 +45,13 @@ class SetupWifi extends Component {
         this.state = {
             isLoading: true,
             networks: [],
+            attemptedNetworkSsid: null,
             connectedNetworkSsid: null,
             connectingNetwork: null,
+            hasAuthProblem: false,
             password: '',
             showPassword: false,
+            errorMessage: '',
         };
 
         this.updateAvailableNetworks = this.updateAvailableNetworks.bind(this);
@@ -59,33 +62,47 @@ class SetupWifi extends Component {
         DeviceEventEmitter.addListener('onWifiStateChange', this.onWifiStateChange);
     }
 
+    componentDidMount() {
+        this.checkWifiEnabled = setInterval(() => {
+            if (this.state.isLoading && this.state.networks.length < 1) {
+                this.setState({
+                    isLoading: false,
+                    errorMessage: 'There was a problem scanning WiFi networks. \nMake sure WiFi is enabled in \"More Options\" above.',
+                })
+            }
+        }, 15000);
+    }
+
     componentWillUnmount() {
+        clearInterval(this.checkWifiEnabled);
         DeviceEventEmitter.removeListener('onWifiStateChange', this.onWifiStateChange);
     }
 
     onWifiStateChange = ({ isConnected, connectedSsid, hasAuthProblem }) => {
-        let { connectedNetworkSsid, connectingNetwork } = this.state;
-
-        let isActiveConnectAttemptFulfilled = connectingNetwork && connectingNetwork.ssid === connectedSsid;
-        let ssidDidChange = connectedSsid !== '<unknown ssid>' && connectedSsid !== this.state.connectedNetworkSsid
-        if (isActiveConnectAttemptFulfilled || ssidDidChange) {
-            connectingNetwork = null;
-        }
+        let _attemptedNetworkSsid = null;
+        let _connectedNetworkSsid = null;
+        let _hasAuthProblem = false;
 
         if (isConnected && !hasAuthProblem) {
-            connectedNetworkSsid = connectedSsid;
+            _connectedNetworkSsid = connectedSsid;
+        } else if (hasAuthProblem) {
+            _attemptedNetworkSsid = connectedSsid;
+            _hasAuthProblem = true;
         } else {
-            connectedNetworkSsid = null;
+            _attemptedNetworkSsid = connectedSsid;
         }
 
         this.setState({
-            connectedNetworkSsid,
-            connectingNetwork,
+            attemptedNetworkSsid: _attemptedNetworkSsid,
+            connectedNetworkSsid: _connectedNetworkSsid,
+            hasAuthProblem: _hasAuthProblem,
         }, () => this.updateAvailableNetworks());
     }
 
     updateAvailableNetworks = (networks) => {
-        if (networks === undefined) networks = this.state.networks;
+        if (networks === undefined) {
+            networks = this.state.networks;
+        };
 
         const { connectedNetworkSsid } = this.state;
         networks = networks.sort((lhs, rhs) => {
@@ -137,7 +154,10 @@ class SetupWifi extends Component {
                 // Already connected
                 this.setState({ connectedNetworkSsid: ssid }, this.updateAvailableNetworks);
             } else {
-                this.setState({ connectingNetwork: network }, () => {
+                this.setState({
+                    connectingNetwork: network,
+                    password: '',
+                }, () => {
                     if (network.security === SECURITY_UNSECURED) {
                         this.connectToNetwork(network);
                     } else {
@@ -165,7 +185,8 @@ class SetupWifi extends Component {
     }
 
     renderNetwork = ({ item }) => {
-        const { connectedNetworkSsid, connectingNetwork } = this.state;
+        const { attemptedNetworkSsid, connectedNetworkSsid, connectingNetwork, hasAuthProblem } = this.state;
+        const hasAttempted = item.ssid == attemptedNetworkSsid && hasAuthProblem;
         const isConnected = item.ssid === connectedNetworkSsid;
         const isConnecting = connectingNetwork && item.ssid === connectingNetwork.ssid;
 
@@ -190,7 +211,10 @@ class SetupWifi extends Component {
                             size='tiny'
                             color='lightGrey200'
                             weight='light'>
-                            { isConnected ? 'Connected' : item.security }
+                            { isConnected ? 'Connected'
+                                : isConnecting ? 'Authenticating...'
+                                : hasAttempted ? 'Authentication problem'
+                                : item.security }
                         </X.Text>
                     </View>
                     <View style={ Styles.setupWifiNetworkStatus }>
@@ -246,7 +270,7 @@ class SetupWifi extends Component {
     keyExtractor = item => item.ssid;
 
     render() {
-        const { connectingNetwork, connectedNetworkSsid, showPassword } = this.state;
+        const { networks, connectingNetwork, connectedNetworkSsid, showPassword, isLoading } = this.state;
         const { hasDataConnection } = this.props;
 
         return (
@@ -342,23 +366,33 @@ class SetupWifi extends Component {
                     </View>
                     <View style={ Styles.setupWifiNetworks }>
                         <FlatList
-                            data={ this.state.networks }
+                            data={ networks }
                             renderItem={ this.renderNetwork }
                             style={ Styles.setupWifiNetworksList }
                             keyExtractor={ this.keyExtractor }
                             extraData={ this.state }
                             refreshControl={
                                 <RefreshControl
-                                    refreshing={ this.state.isLoading }
-                                    onRefresh={ this.refreshNetworks }
-                                />
+                                    refreshing={ isLoading }
+                                    onRefresh={ this.refreshNetworks } />
                             }
-                         />
+                            ListEmptyComponent={
+                                <View style={ Styles.setupWifiNetworksEmpty }>
+                                    <X.Text
+                                        color='white'
+                                        size='small'>
+                                        { isLoading && networks.length == 0 ? 'Scanning WiFi Networks...'
+                                            : !isLoading && networks.length == 0 ?
+                                            this.state.errorMessage : '' }
+                                    </X.Text>
+                                </View>
+                            }>
+                        </FlatList>
                     </View>
                     <View style={ Styles.setupWifiButtons }>
                         <X.Button
                             color='setupInverted'
-                            onPress={ () => this.props.handleSetupWifiBackPressed(this.state.isLoading) }
+                            onPress={ () => this.props.handleSetupWifiBackPressed(isLoading) }
                             style={ Styles.setupWifiBackButton }>
                             Go Back
                         </X.Button>

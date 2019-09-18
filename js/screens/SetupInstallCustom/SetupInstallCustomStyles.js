@@ -18,8 +18,8 @@ export default StyleSheet.create({
         borderWidth: 1,
         borderRadius: 13,
         flex: 0.65,
-        position: 'relative',
         padding: 30,
+        zIndex: 2,
     },
     setupInstallCustomTitle: {
         marginBottom: 20,
@@ -29,6 +29,7 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 20,
+        zIndex: 2,
     },
     setupInstallCustomButtonsBack: {
         display: 'flex',
@@ -45,5 +46,14 @@ export default StyleSheet.create({
         backgroundColor: '#fff',
         borderColor: '#fff',
         borderRadius: 8,
+        zIndex: 2,
+    },
+    setupInstallCustomOverlay: {
+        bottom: 0,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 1,
     },
 });

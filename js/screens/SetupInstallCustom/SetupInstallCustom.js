@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, Keyboard, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -23,6 +23,10 @@ class SetupInstallCustom extends Component {
 
     componentDidMount() {
         this.props.handleSoftwareUrlChanged(Constants.INITIAL_SOFTWARE_URL);
+    }
+
+    handleOverlayPressed() {
+        Keyboard.dismiss();
     }
 
     render() {
@@ -50,6 +54,11 @@ class SetupInstallCustom extends Component {
                             disableFullscreenUI={ true }
                             keyboardType='email-address'
                         />
+                        <TouchableOpacity
+                            activeOpacity={ 1 }
+                            style={ Styles.setupInstallCustomOverlay }
+                            onPress={ this.handleOverlayPressed }
+                        />
                     </View>
                     <View style={ Styles.setupInstallCustomButtons }>
                         <X.Button
@@ -69,6 +78,11 @@ class SetupInstallCustom extends Component {
                             </X.Text>
                         </X.Button>
                     </View>
+                    <TouchableOpacity
+                        activeOpacity={ 1 }
+                        style={ Styles.setupInstallCustomOverlay }
+                        onPress={ this.handleOverlayPressed }
+                    />
                 </X.Entrance>
             </X.Gradient>
         );

@@ -21,15 +21,36 @@ class SetupInstallCustom extends Component {
         handleSetupInstallCustomBackPressed: PropTypes.func,
     };
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            urlInputIsDirty: false,
+        }
+    }
+
     componentDidMount() {
         this.props.handleSoftwareUrlChanged(Constants.INITIAL_SOFTWARE_URL);
+        this.softwareUrlInput.focus();
+    }
+
+    handleSoftwareUrlChanged(softwareUrl) {
+        this.setState({ urlInputIsDirty: true });
+        this.props.handleSoftwareUrlChanged(softwareUrl);
     }
 
     handleOverlayPressed() {
         Keyboard.dismiss();
     }
 
+    hasValidURL(softwareUrl) {
+        const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+        var pattern = new RegExp(expression);
+        return pattern.test(softwareUrl);
+    }
+
     render() {
+        const { urlInputIsDirty } = this.state;
         const { softwareUrl } = this.props;
         return (
             <X.Gradient
@@ -46,7 +67,7 @@ class SetupInstallCustom extends Component {
                             Custom Software URL:
                         </X.Text>
                         <TextInput
-                            onChangeText={ (softwareUrl) => this.props.handleSoftwareUrlChanged(softwareUrl) }
+                            onChangeText={ (softwareUrl) => this.handleSoftwareUrlChanged(softwareUrl) }
                             value={ this.props.softwareUrl }
                             ref={ ref => this.softwareUrlInput = ref }
                             style={ Styles.setupInstallCustomInput }
@@ -54,6 +75,13 @@ class SetupInstallCustom extends Component {
                             disableFullscreenUI={ true }
                             keyboardType='email-address'
                         />
+                        { !this.hasValidURL(softwareUrl) && urlInputIsDirty ? (
+                            <X.Text
+                                color='white'
+                                size='small'>
+                                The URL you have entered is not valid.
+                            </X.Text>
+                        ) : null }
                         <TouchableOpacity
                             activeOpacity={ 1 }
                             style={ Styles.setupInstallCustomOverlay }
@@ -68,11 +96,11 @@ class SetupInstallCustom extends Component {
                             Go Back
                         </X.Button>
                         <X.Button
-                            color={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? 'setupPrimary' : 'setupDisabled' }
-                            onPress={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? this.props.handleSetupInstallCustomCompleted : null }
+                            color={ this.hasValidURL(softwareUrl) ? 'setupPrimary' : 'setupDisabled' }
+                            onPress={ this.hasValidURL(softwareUrl) ? this.props.handleSetupInstallCustomCompleted : null }
                             style={ Styles.setupInstallCustomButtonsContinue }>
                             <X.Text
-                                color={ softwareUrl !== Constants.INITIAL_SOFTWARE_URL ? 'white' : 'setupDisabled' }
+                                color={ this.hasValidURL(softwareUrl) ? 'white' : 'setupDisabled' }
                                 weight='semibold'>
                                 Install Software
                             </X.Text>

@@ -46,6 +46,7 @@ export default StyleSheet.create({
         backgroundColor: '#fff',
         borderColor: '#fff',
         borderRadius: 8,
+        marginBottom: 21,
         zIndex: 2,
     },
     setupInstallCustomOverlay: {

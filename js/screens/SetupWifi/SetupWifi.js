@@ -431,7 +431,7 @@ const mapDispatchToProps = dispatch => ({
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName: 'SetupTerms',
+                    routeName: 'SetupInstall',
                 })
             ]
         }))

@@ -2,12 +2,10 @@ import { AsyncStorage } from 'react-native';
 import { request as Request, devices as Devices } from '@commaai/comma-api';
 import ChffrPlus from '../../native/ChffrPlus';
 
-export const ACTION_SIM_STATE_CHANGED = 'ACTION_SIM_STATE_CHANGED';
 export const ACTION_CONNECTION_STATUS_CHANGED = 'ACTION_CONNECTION_STATUS_CHANGED';
 export const ACTION_WIFI_STATE_CHANGED = 'ACTION_WIFI_STATE_CHANGED';
 export const ACTION_DEVICE_IDS_CHANGED = 'ACTION_DEVICE_IDS_CHANGED';
 export const ACTION_SOFTWARE_URL_CHANGED = 'ACTION_SOFTWARE_URL_CHANGED';
-export const ACTION_DEVICE_IS_PAIRED_CHANGED = 'ACTION_DEVICE_IS_PAIRED_CHANGED';
 export const ACTION_HAS_DATA_CONNECTION_CHANGED = 'ACTION_HAS_DATA_CONNECTION_CHANGED';
 
 
@@ -18,17 +16,6 @@ export function updateWifiState() {
         dispatch({
             type: ACTION_WIFI_STATE_CHANGED,
             wifiState,
-        });
-    }
-}
-
-export function updateSimState() {
-    return async dispatch => {
-        const simState = await ChffrPlus.getSimState();
-
-        dispatch({
-            type: ACTION_SIM_STATE_CHANGED,
-            simState,
         });
     }
 }
@@ -59,15 +46,6 @@ export function setDeviceIds() {
             type: ACTION_DEVICE_IDS_CHANGED,
             imei,
             serial,
-        });
-    }
-}
-
-export function updateDeviceIsPaired(deviceIsPaired) {
-    return async (dispatch, getState) => {
-        dispatch({
-            type: ACTION_DEVICE_IS_PAIRED_CHANGED,
-            deviceIsPaired,
         });
     }
 }

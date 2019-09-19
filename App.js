@@ -9,11 +9,9 @@ import { Provider } from 'react-redux';
 
 import RootReducer from './js/store';
 import StackNavigator from './js/navigators/StackNavigator';
-import SimStateListener from './js/utils/SimStateListener';
 import WifiStateListener from './js/utils/WifiStateListener';
 
 import {
-    updateSimState,
     updateWifiState,
     setDeviceIds,
 } from './js/store/host/actions';
@@ -43,18 +41,15 @@ export default class App extends Component {
     async onBeforeLift() {
         // Called after store is rehydrated from disk
         await this.store.dispatch(setDeviceIds());
-        SimStateListener.register(this.store.dispatch);
         WifiStateListener.register(this.store.dispatch);
     }
 
     componentDidMount() {
-        this.store.dispatch(updateSimState());
         this.store.dispatch(updateWifiState());
         StatusBar.setHidden(true);
     }
 
     componentWillUnmount() {
-        SimStateListener.unregister();
         WifiStateListener.unregister();
     }
 

@@ -8,8 +8,6 @@ import { connect } from 'react-redux';
 
 import SetupWelcome from '../screens/SetupWelcome';
 import SetupWifi from '../screens/SetupWifi';
-import SetupTerms from '../screens/SetupTerms';
-import SetupPair from '../screens/SetupPair';
 import SetupInstall from '../screens/SetupInstall';
 import SetupInstallCustom from '../screens/SetupInstallCustom';
 import SetupInstallConfirm from '../screens/SetupInstallConfirm';
@@ -17,8 +15,6 @@ import SetupInstallConfirm from '../screens/SetupInstallConfirm';
 export const StackNavigator = RNStackNavigator({
     SetupWelcome: { screen: SetupWelcome },
     SetupWifi: { screen: SetupWifi },
-    SetupTerms: { screen: SetupTerms },
-    SetupPair: { screen: SetupPair },
     SetupInstall: { screen: SetupInstall },
     SetupInstallCustom: { screen: SetupInstallCustom },
     SetupInstallConfirm: { screen: SetupInstallConfirm },

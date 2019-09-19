@@ -129,7 +129,7 @@ const mapDispatchToProps = dispatch => ({
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName: 'SetupPair',
+                    routeName: 'SetupWifi',
                 })
             ]
         }))

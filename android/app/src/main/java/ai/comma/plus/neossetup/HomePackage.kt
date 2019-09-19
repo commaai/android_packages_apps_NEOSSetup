@@ -20,9 +20,6 @@ class HomePackage : MainReactPackage() {
                 }),
                 ModuleSpec(WifiModule::class.java, {
                     WifiModule(context!!)
-                }),
-                ModuleSpec(CellularModule::class.java, {
-                    CellularModule(context!!)
                 })
         )
 

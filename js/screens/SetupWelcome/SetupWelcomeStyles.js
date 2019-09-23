@@ -12,7 +12,7 @@ export default StyleSheet.create({
         justifyContent: 'center',
         paddingBottom: 50,
         paddingTop: 60,
-        width: 420,
+        width: 380,
      },
      welcomeHeadline: {
         flex: 0.3,

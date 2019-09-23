@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import X from '../../themes';
 import Styles from './SetupWelcomeStyles';
@@ -12,8 +13,14 @@ class SetupWelcome extends Component {
         header: null,
     };
 
+    static propTypes = {
+        updateHasDataConnection: PropTypes.func,
+        navigateToSetup: PropTypes.func,
+        hasDataConnection: PropTypes.bool,
+    };
+
     componentWillMount() {
-        fetch('https://api.commadotai.com/me').then(() => {
+        fetch('https://api.commadotai.com/v1/me').then(() => {
             this.props.updateHasDataConnection(true);
         }).catch(() => {
             this.props.updateHasDataConnection(false);
@@ -21,6 +28,7 @@ class SetupWelcome extends Component {
     }
 
     render() {
+        const { hasDataConnection } = this.props;
         return (
             <X.Gradient
                 color='dark_black'
@@ -30,19 +38,19 @@ class SetupWelcome extends Component {
                         size='jumbo'
                         weight='bold'
                         color='white'
-                        style={ Styles.welcomeHeadline }>Getting started with EON</X.Text>
+                        style={ Styles.welcomeHeadline }>Getting Started</X.Text>
                     <X.Text
                         size='medium'
                         color='white'
                         weight='light'
                         style={ Styles.welcomeIntro }>
-                        Before we get on the road, let{"\'"}s cover some details and connect to the internet.
+                        Before we get on the road, let{"\'"}s finish installation and cover some details.
                     </X.Text>
                     <View style={ Styles.welcomeButton }>
                         <X.Button
                             color='setupPrimary'
                             size='big'
-                            onPress={ this.props.navigateToSetup }>
+                            onPress={ () => this.props.navigateToSetup(hasDataConnection) }>
                             Continue to Setup
                         </X.Button>
                     </View>
@@ -52,21 +60,28 @@ class SetupWelcome extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        hasDataConnection: state.host.hasDataConnection,
+    }
+}
+
 const mapDispatchToProps = dispatch => ({
     updateHasDataConnection: (hasDataConnection) => {
         dispatch(updateHasDataConnection(hasDataConnection));
     },
-    navigateToSetup: () => {
+    navigateToSetup: (hasDataConnection) => {
+        const routeName = hasDataConnection ? 'SetupInstall' : 'SetupWifi';
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,
             actions: [
                 NavigationActions.navigate({
-                    routeName: 'SetupWifi',
+                    routeName,
                 })
             ]
         }))
     }
 });
 
-export default connect(null, mapDispatchToProps)(SetupWelcome);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupWelcome);

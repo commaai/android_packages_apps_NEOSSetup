@@ -36,7 +36,10 @@ class SetupWifi extends Component {
     };
 
     static propTypes = {
-        onContinue: PropTypes.func,
+        handleSetupWifiMoreOptionsPressed: PropTypes.func,
+        handleSetupWifiCompleted: PropTypes.func,
+        handleSetupWifiBackPressed: PropTypes.func,
+        hasDataConnection: PropTypes.bool,
     };
 
     constructor(props) {
@@ -393,7 +396,7 @@ class SetupWifi extends Component {
                     <View style={ Styles.setupWifiButtons }>
                         <X.Button
                             color='setupInverted'
-                            onPress={ () => this.props.handleSetupWifiBackPressed(isLoading) }
+                            onPress={ () => this.props.handleSetupWifiBackPressed(isLoading, hasDataConnection) }
                             style={ Styles.setupWifiBackButton }>
                             Go Back
                         </X.Button>
@@ -436,17 +439,30 @@ const mapDispatchToProps = dispatch => ({
             ]
         }))
     },
-    handleSetupWifiBackPressed: (isLoading) => {
+    handleSetupWifiBackPressed: (isLoading, hadDataConnection) => {
         if (!isLoading) {
-            dispatch(NavigationActions.reset({
-                index: 0,
-                key: null,
-                actions: [
-                    NavigationActions.navigate({
-                        routeName: 'SetupWelcome',
-                    })
-                ]
-            }))
+            fetch('https://api.commadotai.com/v1/me').then(() => {
+                const routeName = hadDataConnection ? 'SetupInstall' : 'SetupWelcome';
+                dispatch(NavigationActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [
+                        NavigationActions.navigate({
+                            routeName,
+                        })
+                    ]
+                }))
+            }).catch(() => {
+                dispatch(NavigationActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [
+                        NavigationActions.navigate({
+                            routeName: 'SetupWelcome',
+                        })
+                    ]
+                }))
+            })
         }
     },
 });

@@ -3,6 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { NetworkInfo } from 'react-native-network-info';
 
 import { updateSoftwareUrl } from '../../store/host/actions';
 import X from '../../themes';
@@ -17,13 +18,24 @@ class SetupInstall extends Component {
         handleSoftwareUrlChanged: PropTypes.func,
         handleSetupInstallCompleted: PropTypes.func,
         handleSetupInstallBackPressed: PropTypes.func,
+        handleSetupConnectToWifiPressed: PropTypes.func,
+        hasDataConnection: PropTypes.bool,
     };
 
     constructor(props) {
         super(props);
         this.state = {
             selectedOption: '',
+            connectedNetworkSsid: '',
         };
+    }
+
+    componentWillMount() {
+        NetworkInfo.getSSID(connectedNetworkSsid => {
+            if (connectedNetworkSsid !== '<unknown ssid>') {
+                this.setState({ connectedNetworkSsid })
+            }
+        })
     }
 
     handleInstallOptionPressed(selectedOption) {
@@ -34,7 +46,8 @@ class SetupInstall extends Component {
     }
 
     render() {
-        const { selectedOption } = this.state;
+        const { selectedOption, connectedNetworkSsid } = this.state;
+        const { hasDataConnection } = this.props;
         return (
             <X.Gradient
                 color='dark_black'>
@@ -46,6 +59,24 @@ class SetupInstall extends Component {
                             weight='bold'>
                             Choose Software to Install
                         </X.Text>
+                        <X.Button
+                            size='small'
+                            color='setupInverted'
+                            onPress={ this.props.handleSetupConnectToWifiPressed }
+                            style={ Styles.setupInstallHeaderButton }>
+                            { connectedNetworkSsid !== '' ? (
+                                <X.Image
+                                    source={ require('../../img/circled-checkmark.png') }
+                                    style={ Styles.setupInstallHeaderConnectedIcon }
+                                    isFlex={ false } />
+                            ) : null }
+                            <X.Text
+                                color='white'
+                                size='small'
+                                weight={ connectedNetworkSsid == '' ? 'semibold' : 'regular' }>
+                                { connectedNetworkSsid == '' ? 'Connect to WiFi' : 'Connected to WiFi' }
+                            </X.Text>
+                        </X.Button>
                     </View>
                     <View style={ Styles.setupInstallOptions }>
                         <TouchableOpacity
@@ -84,7 +115,7 @@ class SetupInstall extends Component {
                     <View style={ Styles.setupInstallButtons }>
                         <X.Button
                             color='setupInverted'
-                            onPress={ this.props.handleSetupInstallBackPressed }
+                            onPress={ () => this.props.handleSetupInstallBackPressed(hasDataConnection) }
                             style={ Styles.setupInstallButtonsBack }>
                             Go Back
                         </X.Button>
@@ -105,25 +136,43 @@ class SetupInstall extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        hasDataConnection: state.host.hasDataConnection,
+    }
+}
+
 const mapDispatchToProps = dispatch => ({
     handleSoftwareUrlChanged: (softwareUrl) => {
         dispatch(updateSoftwareUrl(softwareUrl));
     },
     handleSetupInstallCompleted: async (selectedOption) => {
-        const destination = selectedOption == 'custom' ? 'SetupInstallCustom' : 'SetupInstallConfirm';
+        const routeName = selectedOption == 'custom' ? 'SetupInstallCustom' : 'SetupInstallConfirm';
         if (selectedOption !== '') {
             dispatch(NavigationActions.reset({
                 index: 0,
                 key: null,
                 actions: [
                     NavigationActions.navigate({
-                        routeName: destination,
+                        routeName,
                     })
                 ]
             }))
         }
     },
-    handleSetupInstallBackPressed: () => {
+    handleSetupInstallBackPressed: (hasDataConnection) => {
+        const routeName = hasDataConnection ? 'SetupWelcome' : 'SetupWifi';
+        dispatch(NavigationActions.reset({
+            index: 0,
+            key: null,
+            actions: [
+                NavigationActions.navigate({
+                    routeName,
+                })
+            ]
+        }))
+    },
+    handleSetupConnectToWifiPressed: () => {
         dispatch(NavigationActions.reset({
             index: 0,
             key: null,
@@ -136,4 +185,4 @@ const mapDispatchToProps = dispatch => ({
     },
 });
 
-export default connect(null, mapDispatchToProps)(SetupInstall);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupInstall);

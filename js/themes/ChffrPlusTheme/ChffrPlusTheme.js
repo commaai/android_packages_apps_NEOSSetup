@@ -47,7 +47,7 @@ export let ChffrPlusTheme = {
             },
             setupInverted: {
                 backgroundColor: Colors.transparent,
-                borderColor: '#1D2225',
+                borderColor: '#272D30',
                 borderRadius: 13,
                 borderWidth: 1,
             },

@@ -13,6 +13,18 @@ export default StyleSheet.create({
         height: 80,
         paddingTop: 10,
     },
+    setupInstallHeaderButton: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        paddingLeft: 15,
+        paddingRight: 15,
+    },
+    setupInstallHeaderConnectedIcon: {
+        alignSelf: 'center',
+        marginRight: 10,
+        height: 20,
+        width: 20,
+    },
     setupInstallOptions: {
         backgroundColor: 'rgba(3, 4, 4, 0.16)',
         borderColor: '#272D30',

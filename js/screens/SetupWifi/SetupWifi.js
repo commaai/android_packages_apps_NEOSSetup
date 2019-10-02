@@ -164,7 +164,7 @@ class SetupWifi extends Component {
                     if (network.security === SECURITY_UNSECURED) {
                         this.connectToNetwork(network);
                     } else {
-                        this.popupDialog.show();
+                        this.passwordDialog.show();
                         this.passwordInput.focus();
                     }
                 });
@@ -176,15 +176,27 @@ class SetupWifi extends Component {
         const { password, connectingNetwork } = this.state;
         if (password.length < 8 || connectingNetwork == null) return;
 
-        this.popupDialog.dismiss();
+        this.passwordDialog.dismiss();
         this.connectToNetwork(connectingNetwork, password);
         Keyboard.dismiss();
     }
 
     onDismissPasswordPrompt = () => {
         Keyboard.dismiss();
-        this.popupDialog.dismiss();
+        this.passwordDialog.dismiss();
         this.setState({ connectingNetwork: null });
+    }
+
+    onDismissDataConnectionDialog = () => {
+        this.dataConnectionDialog.dismiss();
+    }
+
+    handleSetupWifiContinuePressed = () => {
+        fetch('https://api.commadotai.com/v1/me').then(() => {
+            this.props.handleSetupWifiCompleted();
+        }).catch(() => {
+            this.dataConnectionDialog.show();
+        })
     }
 
     renderNetwork = ({ item }) => {
@@ -282,7 +294,7 @@ class SetupWifi extends Component {
                 <X.Entrance style={ Styles.setupWifi }>
                     <PopupDialog
                         onDismissed={ this.onDismissPasswordPrompt }
-                        ref={ (ref) => this.popupDialog = ref }
+                        ref={ (ref) => this.passwordDialog = ref }
                         height={ 0.5 }
                         dialogStyle={ Styles.setupWifiPasswordDialog }
                         haveOverlay={ true }
@@ -290,7 +302,7 @@ class SetupWifi extends Component {
                         actions={ [
                             <View
                                 key="dialog_buttons"
-                                style={ Styles.setupWifiPasswordDialogButtons }>
+                                style={ Styles.setupWifiDialogButtons }>
                                 <View style={ Styles.setupWifiPasswordDialogCheckbox }>
                                     <X.CheckboxField
                                         size='tiny'
@@ -304,7 +316,7 @@ class SetupWifi extends Component {
                                     size='small'
                                     color='setupInvertedLight'
                                     onPress={ this.onDismissPasswordPrompt }
-                                    style={ Styles.setupWifiPasswordDialogButton }>
+                                    style={ Styles.setupWifiDialogButton }>
                                     <X.Text
                                         color='lightGrey700'
                                         size='small'
@@ -317,7 +329,7 @@ class SetupWifi extends Component {
                                     size='small'
                                     color='setupPrimary'
                                     onPress={ () => this.onPasswordPromptConnectPressed() }
-                                    style={ Styles.setupWifiPasswordDialogButton }>
+                                    style={ Styles.setupWifiDialogButton }>
                                     <X.Text
                                         color='white'
                                         size='small'
@@ -352,6 +364,44 @@ class SetupWifi extends Component {
                                 keyboardType={ showPassword ? 'email-address' : null }
                             />
                         </View>
+                    </PopupDialog>
+                    <PopupDialog
+                        onDismissed={ this.onDismissDataConnectionDialog }
+                        ref={ (ref) => this.dataConnectionDialog = ref }
+                        height={ 0.48 }
+                        dialogStyle={ Styles.setupWifiNoDataConnectionDialog }
+                        haveOverlay={ true }
+                        dismissOnTouchOutside={ false }
+                        actions={ [
+                            <View
+                                key="dialog_buttons"
+                                style={ Styles.setupWifiDialogButtons }>
+                                <X.Button
+                                    key='connect'
+                                    size='small'
+                                    color='setupPrimary'
+                                    onPress={ this.onDismissDataConnectionDialog }
+                                    style={ Styles.setupWifiDialogButton }>
+                                    <X.Text
+                                        color='white'
+                                        size='small'
+                                        weight='semibold'>
+                                        OK
+                                    </X.Text>
+                                </X.Button>
+                            </View>
+                        ] }>
+                        <X.Text
+                            size='small'
+                            weight='semibold'>
+                            The network "{ connectedNetworkSsid }" is not connected to the internet.
+                        </X.Text>
+                        <X.Text
+                            size='small'
+                            color='whiteFieldLabel'
+                            style={ Styles.setupWifiNoDataConnectionDialogText }>
+                            Please try another WiFi network with an active data connection.
+                        </X.Text>
                     </PopupDialog>
                     <View style={ Styles.setupWifiHeader }>
                         <X.Text
@@ -402,7 +452,7 @@ class SetupWifi extends Component {
                         </X.Button>
                         <X.Button
                             color={ connectedNetworkSsid ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
-                            onPress={ connectedNetworkSsid || hasDataConnection ? this.props.handleSetupWifiCompleted : null }
+                            onPress={ connectedNetworkSsid || hasDataConnection ? this.handleSetupWifiContinuePressed : null }
                             style={ Styles.setupWifiContinueButton }>
                             <X.Text
                                 color={ connectedNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }

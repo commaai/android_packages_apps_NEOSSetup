@@ -86,6 +86,15 @@ export default StyleSheet.create({
         justifyContent: 'center',
         width: 320,
     },
+    setupWifiNoDataConnectionDialog: {
+        padding: 20,
+        marginTop: -40,
+        width: 540,
+    },
+    setupWifiNoDataConnectionDialogText: {
+        paddingTop: 10,
+        paddingBottom: 20,
+    },
     setupWifiPasswordDialog: {
         padding: 20,
         marginTop: -140,
@@ -117,13 +126,13 @@ export default StyleSheet.create({
     setupWifiPasswordDialogCheckbox: {
         width: 200,
     },
-    setupWifiPasswordDialogButtons: {
+    setupWifiDialogButtons: {
         justifyContent: 'flex-end',
         flexDirection: 'row',
         height: 160,
         paddingTop: 10,
     },
-    setupWifiPasswordDialogButton: {
+    setupWifiDialogButton: {
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',

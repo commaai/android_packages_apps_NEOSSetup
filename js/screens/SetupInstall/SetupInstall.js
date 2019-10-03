@@ -41,7 +41,7 @@ class SetupInstall extends Component {
     handleInstallOptionPressed(selectedOption) {
         this.setState({ selectedOption });
         if (selectedOption == 'dashcam') {
-            this.props.handleSoftwareUrlChanged('https://chffrplus.comma.ai');
+            this.props.handleSoftwareUrlChanged('https://dashcam.comma.ai');
         }
     }
 

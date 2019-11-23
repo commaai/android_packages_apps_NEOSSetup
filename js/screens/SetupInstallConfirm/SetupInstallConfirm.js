@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, DeviceEventEmitter } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 
@@ -15,17 +15,26 @@ class SetupInstallConfirm extends Component {
     componentDidMount() {
         const { softwareUrl } = this.props;
         this.props.handleSetupInstallConfirmCompleted(softwareUrl);
+        DeviceEventEmitter.addListener('onDownloadFailed', (e) => {
+            this.setState({
+                statusTitle: 'Download failed',
+                statusText: 'Please check the URL and try again.',
+                buttonText: 'Go back',
+            });
+        });
     }
 
     constructor(props) {
         super(props);
         this.state = {
-            statusText: "Once your software has finished downloading, the installation will begin.",
+            statusTitle: 'Downloading software...',
+            statusText: 'Once your software has finished downloading, the installation will begin.',
+            buttonText: 'Cancel',
         }
     }
 
     render() {
-        const { statusText } = this.state;
+        const { statusTitle, statusText, buttonText } = this.state;
         return (
             <X.Gradient
                 color='dark_black'
@@ -35,7 +44,9 @@ class SetupInstallConfirm extends Component {
                         size='jumbo'
                         weight='bold'
                         color='white'
-                        style={ Styles.setupInstallConfirmHeadline }>Downloading software...</X.Text>
+                        style={ Styles.setupInstallConfirmHeadline }>
+                        { statusTitle }
+                    </X.Text>
                     <X.Text
                         size='medium'
                         color='white'
@@ -48,7 +59,7 @@ class SetupInstallConfirm extends Component {
                             color='setupInverted'
                             size='small'
                             onPress={ this.props.handleSetupInstallConfirmBackPressed }>
-                            Cancel
+                            { buttonText }
                         </X.Button>
                     </View>
                 </X.Entrance>

@@ -81,6 +81,12 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
         ctx.currentActivity?.finish()
     }
 
+    private fun emitDownloadStatus(status: Boolean) {
+        reactApplicationContext
+            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+            .emit("onDownloadFailed", status)
+    }
+
     private fun createCompletedSetupFile(version: String): File {
         val path = "/sdcard/neos_setup_completed"
         val file = File(path)
@@ -136,7 +142,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
                     CloudLog.exception("NeosSetup.onPostExecute", e)
                 }
             } else {
-                // handle error
+                module?.emitDownloadStatus(false);
             }
         }
     }

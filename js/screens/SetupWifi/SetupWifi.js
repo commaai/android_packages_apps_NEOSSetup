@@ -490,30 +490,28 @@ const mapDispatchToProps = dispatch => ({
         }))
     },
     handleSetupWifiBackPressed: (isLoading, hadDataConnection) => {
-        if (!isLoading) {
-            fetch('https://api.commadotai.com/v1/me').then(() => {
-                const routeName = hadDataConnection ? 'SetupInstall' : 'SetupWelcome';
-                dispatch(NavigationActions.reset({
-                    index: 0,
-                    key: null,
-                    actions: [
-                        NavigationActions.navigate({
-                            routeName,
-                        })
-                    ]
-                }))
-            }).catch(() => {
-                dispatch(NavigationActions.reset({
-                    index: 0,
-                    key: null,
-                    actions: [
-                        NavigationActions.navigate({
-                            routeName: 'SetupWelcome',
-                        })
-                    ]
-                }))
-            })
-        }
+        fetch('https://api.commadotai.com/v1/me').then(() => {
+            const routeName = hadDataConnection ? 'SetupInstall' : 'SetupWelcome';
+            dispatch(NavigationActions.reset({
+                index: 0,
+                key: null,
+                actions: [
+                    NavigationActions.navigate({
+                        routeName,
+                    })
+                ]
+            }))
+        }).catch(() => {
+            dispatch(NavigationActions.reset({
+                index: 0,
+                key: null,
+                actions: [
+                    NavigationActions.navigate({
+                        routeName: 'SetupWelcome',
+                    })
+                ]
+            }))
+        })
     },
 });
 

@@ -14,15 +14,7 @@ class SetupInstallConfirm extends Component {
 
     componentDidMount() {
         const { softwareUrl } = this.props;
-        const acceptedUrls = [
-          'https://dashcam.comma.ai',
-          'https://openpilot.comma.ai'
-        ];
-        if (acceptedUrls.includes(softwareUrl)) {
-          this.props.handleSetupInstallConfirmCompleted(softwareUrl);
-        } else {
-          this.handleDownloadFailed();
-        }
+        this.props.handleSetupInstallConfirmCompleted(softwareUrl);
         DeviceEventEmitter.addListener('onDownloadFailed', (e) => {
             this.handleDownloadFailed();
         });

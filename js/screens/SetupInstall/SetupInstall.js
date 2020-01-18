@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { NetworkInfo } from 'react-native-network-info';
 
-import { updateSoftwareUrl } from '../../store/host/actions';
+import { updateSoftwareUrl, updateHasDataConnection } from '../../store/host/actions';
 import X from '../../themes';
 import Styles from './SetupInstallStyles';
 
@@ -26,16 +26,22 @@ class SetupInstall extends Component {
         super(props);
         this.state = {
             selectedOption: '',
-            connectedNetworkSsid: '',
         };
     }
 
     componentWillMount() {
-        NetworkInfo.getSSID(connectedNetworkSsid => {
-            if (connectedNetworkSsid !== '<unknown ssid>') {
-                this.setState({ connectedNetworkSsid })
-            }
-        })
+        this.checkHasConnection = setInterval(() => {
+          fetch('https://api.commadotai.com/v1/me').then(() => {
+              this.props.updateHasDataConnection(true);
+          }).catch(() => {
+              this.props.updateHasDataConnection(false);
+              this.props.handleSetupConnectToWifiPressed();
+          })
+        }, 2000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.checkHasConnection);
     }
 
     handleInstallOptionPressed(selectedOption) {
@@ -46,7 +52,7 @@ class SetupInstall extends Component {
     }
 
     render() {
-        const { selectedOption, connectedNetworkSsid } = this.state;
+        const { selectedOption } = this.state;
         const { hasDataConnection } = this.props;
         return (
             <X.Gradient
@@ -64,17 +70,11 @@ class SetupInstall extends Component {
                             color='setupInverted'
                             onPress={ this.props.handleSetupConnectToWifiPressed }
                             style={ Styles.setupInstallHeaderButton }>
-                            { connectedNetworkSsid !== '' ? (
-                                <X.Image
-                                    source={ require('../../img/circled-checkmark.png') }
-                                    style={ Styles.setupInstallHeaderConnectedIcon }
-                                    isFlex={ false } />
-                            ) : null }
                             <X.Text
                                 color='white'
                                 size='small'
-                                weight={ connectedNetworkSsid == '' ? 'semibold' : 'regular' }>
-                                { connectedNetworkSsid == '' ? 'Connect to WiFi' : 'Connected to WiFi' }
+                                weight='semibold'>
+                                Connect to WiFi
                             </X.Text>
                         </X.Button>
                     </View>
@@ -143,6 +143,9 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch => ({
+    updateHasDataConnection: (hasDataConnection) => {
+        dispatch(updateHasDataConnection(hasDataConnection));
+    },
     handleSoftwareUrlChanged: (softwareUrl) => {
         dispatch(updateSoftwareUrl(softwareUrl));
     },

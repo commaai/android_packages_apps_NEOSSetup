@@ -20,13 +20,18 @@ class SetupWelcome extends Component {
     };
 
     componentWillMount() {
+        this.testConnection();
         this.checkHasConnection = setInterval(() => {
-          fetch('https://api.commadotai.com/v1/me').then(() => {
-              this.props.updateHasDataConnection(true);
-          }).catch(() => {
-              this.props.updateHasDataConnection(false);
-          })
+          this.testConnection();
         }, 2000);
+    }
+
+    testConnection() {
+        fetch('https://api.commadotai.com/v1/me').then(() => {
+            this.props.updateHasDataConnection(true);
+        }).catch(() => {
+            this.props.updateHasDataConnection(false);
+        })
     }
 
     componentWillUnmount() {

@@ -55,7 +55,7 @@ class SetupWifi extends Component {
             hasAuthProblem: false,
             password: '',
             showPassword: false,
-            errorMessage: '',
+            errorMessage: 'There was a problem scanning WiFi networks. \nMake sure WiFi is enabled in \"More Options\" above.',
         };
 
         this.updateAvailableNetworks = this.updateAvailableNetworks.bind(this);
@@ -67,19 +67,13 @@ class SetupWifi extends Component {
     }
 
     componentDidMount() {
+        this.testConnection();
         this.checkHasConnection = setInterval(() => {
-          fetch('https://api.commadotai.com/v1/me').then(() => {
-              this.props.updateHasDataConnection(true);
-          }).catch(() => {
-              this.props.updateHasDataConnection(false);
-          })
+            this.testConnection();
         }, 2000);
         this.checkWifiEnabled = setInterval(() => {
-            if (this.state.isLoading && this.state.networks.length < 1) {
-                this.setState({
-                    isLoading: false,
-                    errorMessage: 'There was a problem scanning WiFi networks. \nMake sure WiFi is enabled in \"More Options\" above.',
-                })
+            if (this.state.networks.length < 1) {
+                this.handleProblemScanningNetworks()
             }
         }, 15000);
     }
@@ -88,6 +82,20 @@ class SetupWifi extends Component {
         clearInterval(this.checkHasConnection);
         clearInterval(this.checkWifiEnabled);
         DeviceEventEmitter.removeListener('onWifiStateChange', this.onWifiStateChange);
+    }
+
+    testConnection() {
+        fetch('https://api.commadotai.com/v1/me').then(() => {
+            this.props.updateHasDataConnection(true);
+        }).catch(() => {
+            this.props.updateHasDataConnection(false);
+        })
+    }
+
+    handleProblemScanningNetworks = () => {
+        this.setState({
+            isLoading: false,
+        })
     }
 
     onWifiStateChange = ({ isConnected, connectedSsid, hasAuthProblem }) => {
@@ -296,7 +304,7 @@ class SetupWifi extends Component {
     render() {
         const { networks, connectingNetwork, connectedNetworkSsid, showPassword, isLoading } = this.state;
         const { hasDataConnection } = this.props;
-
+        const hasNetworkSsid = (connectedNetworkSsid && connectedNetworkSsid !== '<unknown ssid>');
         return (
             <X.Gradient
                 color='dark_black'>
@@ -444,9 +452,7 @@ class SetupWifi extends Component {
                                     <X.Text
                                         color='white'
                                         size='small'>
-                                        { isLoading && networks.length == 0 ? 'Scanning WiFi Networks...'
-                                            : !isLoading && networks.length == 0 ?
-                                            this.state.errorMessage : '' }
+                                        { isLoading && networks.length == 0 ? 'Scanning WiFi Networks...' : this.state.errorMessage }
                                     </X.Text>
                                 </View>
                             }>
@@ -460,13 +466,13 @@ class SetupWifi extends Component {
                             Go Back
                         </X.Button>
                         <X.Button
-                            color={ connectedNetworkSsid ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
-                            onPress={ connectedNetworkSsid || hasDataConnection ? this.handleSetupWifiContinuePressed : null }
+                            color={ hasNetworkSsid ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
+                            onPress={ hasNetworkSsid || hasDataConnection ? this.handleSetupWifiContinuePressed : null }
                             style={ Styles.setupWifiContinueButton }>
                             <X.Text
-                                color={ connectedNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
+                                color={ hasNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
                                 weight='semibold'>
-                                { hasDataConnection && !connectedNetworkSsid ? 'Skip' : 'Continue' }
+                                { hasDataConnection && !(hasNetworkSsid) ? 'Skip' : 'Continue' }
                             </X.Text>
                         </X.Button>
                     </View>

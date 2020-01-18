@@ -21,6 +21,7 @@ import WifiModule from '../../native/Wifi';
 import X from '../../themes';
 import ChffrPlus from '../../native/ChffrPlus';
 import Styles from './SetupWifiStyles';
+import { updateHasDataConnection } from '../../store/host/actions';
 
 const SECURITY_UNSECURED = 'Unsecured';
 const BarImagesByLevel = {
@@ -66,6 +67,13 @@ class SetupWifi extends Component {
     }
 
     componentDidMount() {
+        this.checkHasConnection = setInterval(() => {
+          fetch('https://api.commadotai.com/v1/me').then(() => {
+              this.props.updateHasDataConnection(true);
+          }).catch(() => {
+              this.props.updateHasDataConnection(false);
+          })
+        }, 2000);
         this.checkWifiEnabled = setInterval(() => {
             if (this.state.isLoading && this.state.networks.length < 1) {
                 this.setState({
@@ -77,6 +85,7 @@ class SetupWifi extends Component {
     }
 
     componentWillUnmount() {
+        clearInterval(this.checkHasConnection);
         clearInterval(this.checkWifiEnabled);
         DeviceEventEmitter.removeListener('onWifiStateChange', this.onWifiStateChange);
     }
@@ -475,6 +484,9 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch => ({
+    updateHasDataConnection: (hasDataConnection) => {
+        dispatch(updateHasDataConnection(hasDataConnection));
+    },
     handleSetupWifiMoreOptionsPressed: () => {
         ChffrPlus.openWifiSettings();
     },

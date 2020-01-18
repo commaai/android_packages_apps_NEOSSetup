@@ -103,6 +103,7 @@ class ChffrPlusModule(val ctx: ReactApplicationContext) :
                 val url = URL(params[0])
                 val conn = url.openConnection() as URLConnection
                 conn.setRequestProperty("User-Agent", "NEOSSetup-0.2")
+                conn.setConnectTimeout(30000)
 
                 val contentLength = conn.getContentLength()
                 val inStream = DataInputStream(conn.getInputStream())

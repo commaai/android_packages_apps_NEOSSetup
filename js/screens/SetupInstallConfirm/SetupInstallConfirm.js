@@ -14,13 +14,17 @@ class SetupInstallConfirm extends Component {
 
     componentDidMount() {
         const { softwareUrl } = this.props;
-        this.props.handleSetupInstallConfirmCompleted(softwareUrl);
+        const acceptedUrls = [
+          'https://dashcam.comma.ai',
+          'https://openpilot.comma.ai'
+        ];
+        if (acceptedUrls.includes(softwareUrl)) {
+          this.props.handleSetupInstallConfirmCompleted(softwareUrl);
+        } else {
+          this.handleDownloadFailed();
+        }
         DeviceEventEmitter.addListener('onDownloadFailed', (e) => {
-            this.setState({
-                statusTitle: 'Download failed',
-                statusText: 'Please check the URL and try again.',
-                buttonText: 'Go back',
-            });
+            this.handleDownloadFailed();
         });
     }
 
@@ -29,12 +33,20 @@ class SetupInstallConfirm extends Component {
         this.state = {
             statusTitle: 'Downloading software...',
             statusText: 'Once your software has finished downloading, the installation will begin.',
-            buttonText: 'Cancel',
+            showBackButton: false,
         }
     }
 
+    handleDownloadFailed() {
+      this.setState({
+          statusTitle: 'Download failed',
+          statusText: 'Please check the URL and try again.',
+          showBackButton: true,
+      });
+    }
+
     render() {
-        const { statusTitle, statusText, buttonText } = this.state;
+        const { statusTitle, statusText, showBackButton } = this.state;
         return (
             <X.Gradient
                 color='dark_black'
@@ -54,14 +66,16 @@ class SetupInstallConfirm extends Component {
                         style={ Styles.setupInstallConfirmIntro }>
                         { statusText }
                     </X.Text>
-                    <View style={ Styles.setupInstallConfirmButton }>
-                        <X.Button
-                            color='setupInverted'
-                            size='small'
-                            onPress={ this.props.handleSetupInstallConfirmBackPressed }>
-                            { buttonText }
-                        </X.Button>
-                    </View>
+                    { showBackButton ? (
+                      <View style={ Styles.setupInstallConfirmButton }>
+                          <X.Button
+                              color='setupInverted'
+                              size='small'
+                              onPress={ this.props.handleSetupInstallConfirmBackPressed }>
+                              Go back
+                          </X.Button>
+                      </View>
+                    ) : null }
                 </X.Entrance>
             </X.Gradient>
         );

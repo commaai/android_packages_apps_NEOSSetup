@@ -52,6 +52,7 @@ class SetupWifi extends Component {
             attemptedNetworkSsid: null,
             connectedNetworkSsid: null,
             connectingNetwork: null,
+            hasSim: false,
             hasAuthProblem: false,
             password: '',
             showPassword: false,
@@ -71,6 +72,13 @@ class SetupWifi extends Component {
         this.checkHasConnection = setInterval(() => {
             this.testConnection();
         }, 2000);
+        this.checkHasSim = setInterval(() => {
+            WifiModule.hasSim().then((hasSim) => {
+                this.setState({
+                    hasSim
+                })
+            })
+        }, 1000);
         this.checkWifiEnabled = setInterval(() => {
             if (this.state.networks.length < 1) {
                 this.handleProblemScanningNetworks()
@@ -81,6 +89,7 @@ class SetupWifi extends Component {
     componentWillUnmount() {
         clearInterval(this.checkHasConnection);
         clearInterval(this.checkWifiEnabled);
+        clearInterval(this.checkHasSim);
         DeviceEventEmitter.removeListener('onWifiStateChange', this.onWifiStateChange);
     }
 
@@ -302,7 +311,7 @@ class SetupWifi extends Component {
     keyExtractor = item => item.ssid;
 
     render() {
-        const { networks, connectingNetwork, connectedNetworkSsid, showPassword, isLoading } = this.state;
+        const { networks, connectingNetwork, connectedNetworkSsid, showPassword, isLoading, hasSim } = this.state;
         const { hasDataConnection } = this.props;
         const hasNetworkSsid = (connectedNetworkSsid && connectedNetworkSsid !== '<unknown ssid>');
         return (
@@ -466,14 +475,19 @@ class SetupWifi extends Component {
                             Go Back
                         </X.Button>
                         <X.Button
-                            color={ hasNetworkSsid ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
+                            color={ (hasNetworkSsid && hasDataConnection) ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
                             onPress={ hasNetworkSsid || hasDataConnection ? this.handleSetupWifiContinuePressed : null }
                             style={ Styles.setupWifiContinueButton }>
                             <X.Text
                                 color={ hasNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
                                 weight='semibold'>
-                                { hasDataConnection && !(hasNetworkSsid) ? 'Skip' : 'Continue' }
+                                { hasDataConnection && hasNetworkSsid ? 'Continue' : 'Skip' }
                             </X.Text>
+                            {(hasNetworkSsid || hasDataConnection) || <X.Text
+                                color={ hasNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
+                                size='small'>
+                                { hasSim ? 'Waiting on cellular connection...' : 'No SIM inserted' }
+                            </X.Text>}
                         </X.Button>
                     </View>
                 </X.Entrance>

@@ -218,11 +218,18 @@ class SetupWifi extends Component {
     }
 
     handleSetupWifiContinuePressed = () => {
-        fetch('https://api.commadotai.com/v1/me').then(() => {
-            this.props.handleSetupWifiCompleted();
-        }).catch(() => {
+        const { hasDataConnection } = this.props;
+        const { connectedNetworkSsid } = this.state;
+        const hasNetworkSsid = (connectedNetworkSsid && connectedNetworkSsid !== '<unknown ssid>');
+        if (hasDataConnection) {
+            fetch('https://api.commadotai.com/v1/me').then(() => {
+                this.props.handleSetupWifiCompleted();
+            }).catch(() => {
+                this.dataConnectionDialog.show();
+            })
+        } else if (hasNetworkSsid) {
             this.dataConnectionDialog.show();
-        })
+        }
     }
 
     renderNetwork = ({ item }) => {
@@ -275,8 +282,7 @@ class SetupWifi extends Component {
                                     Connected
                                 </X.Text>
                             </X.Button>
-                        ): null }
-                        { isConnecting ? (
+                        ): isConnecting ? (
                             <X.Button
                                 color='setupInverted'
                                 size='small'
@@ -288,7 +294,7 @@ class SetupWifi extends Component {
                                     size={ 37 }
                                     style={ Styles.setupWifiConnectingIndicator }/>
                             </X.Button>
-                        ): null }
+                        ) : null }
                         { !isConnected && !isConnecting ? (
                             <X.Button
                                 color='setupInverted'
@@ -476,18 +482,20 @@ class SetupWifi extends Component {
                         </X.Button>
                         <X.Button
                             color={ (hasNetworkSsid && hasDataConnection) ? 'setupPrimary' : hasDataConnection ? 'setupInverted' : 'setupDisabled' }
-                            onPress={ hasNetworkSsid || hasDataConnection ? this.handleSetupWifiContinuePressed : null }
+                            onPress={ this.handleSetupWifiContinuePressed }
                             style={ Styles.setupWifiContinueButton }>
                             <X.Text
-                                color={ hasNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
+                                color={ hasDataConnection ? 'white' : 'setupDisabled' }
                                 weight='semibold'>
-                                { hasDataConnection && hasNetworkSsid ? 'Continue' : 'Skip' }
+                                { hasNetworkSsid ? 'Continue' : 'Skip' }
                             </X.Text>
-                            {(hasNetworkSsid || hasDataConnection) || <X.Text
-                                color={ hasNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
-                                size='small'>
-                                { hasSim ? 'Waiting on cellular connection...' : 'No SIM inserted' }
-                            </X.Text>}
+                            { !(hasNetworkSsid || hasDataConnection) && (
+                                <X.Text
+                                    color={ hasNetworkSsid || hasDataConnection ? 'white' : 'setupDisabled' }
+                                    size='small'>
+                                    { hasSim ? 'Waiting on cellular connection...' : 'No SIM inserted' }
+                                </X.Text>
+                            ) }
                         </X.Button>
                     </View>
                 </X.Entrance>
@@ -522,18 +530,29 @@ const mapDispatchToProps = dispatch => ({
         }))
     },
     handleSetupWifiBackPressed: (isLoading, hadDataConnection) => {
-        fetch('https://api.commadotai.com/v1/me').then(() => {
-            const routeName = hadDataConnection ? 'SetupInstall' : 'SetupWelcome';
-            dispatch(NavigationActions.reset({
-                index: 0,
-                key: null,
-                actions: [
-                    NavigationActions.navigate({
-                        routeName,
-                    })
-                ]
-            }))
-        }).catch(() => {
+        if (hadDataConnection) {
+            fetch('https://api.commadotai.com/v1/me').then(() => {
+                dispatch(NavigationActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [
+                        NavigationActions.navigate({
+                            routeName: 'SetupInstall',
+                        })
+                    ]
+                }))
+            }).catch(() => {
+                dispatch(NavigationActions.reset({
+                    index: 0,
+                    key: null,
+                    actions: [
+                        NavigationActions.navigate({
+                            routeName: 'SetupWelcome',
+                        })
+                    ]
+                }))
+            })
+        } else {
             dispatch(NavigationActions.reset({
                 index: 0,
                 key: null,
@@ -543,7 +562,7 @@ const mapDispatchToProps = dispatch => ({
                     })
                 ]
             }))
-        })
+        }
     },
 });
 

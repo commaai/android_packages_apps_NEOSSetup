@@ -24,7 +24,7 @@ export let ChffrPlusTheme = {
             bold: 'OpenSans-Bold',
         },
         colors: {
-            setupDisabled: '#1D2225',
+            setupDisabled: '#465259',
             lightGrey200: '#ACB7BD',
             whiteFieldLabel: '#49545B',
             lightGrey700: '#758791',

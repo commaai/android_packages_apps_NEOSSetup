@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.telephony.TelephonyManager
 import android.net.NetworkInfo
 import android.net.wifi.*
 import android.util.Log
@@ -139,6 +140,13 @@ class WifiModule (ctx: ReactApplicationContext) : ReactContextBaseJavaModule(ctx
         } else {
             promise.reject("EDISCONNECT", "wifiManager.disconnect failed. See logcat for details")
         }
+    }
+
+    @ReactMethod
+    fun hasSim(promise: Promise) {
+        val tm = reactApplicationContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        val state = tm.getSimState()
+        promise.resolve(state != TelephonyManager.SIM_STATE_UNKNOWN && state != TelephonyManager.SIM_STATE_ABSENT)
     }
 
     fun onNetworkStateChange(wifiInfo: WifiInfo, isConnected: Boolean, hasAuthProblem: Boolean) {

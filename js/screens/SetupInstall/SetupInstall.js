@@ -24,6 +24,7 @@ class SetupInstall extends Component {
 
     constructor(props) {
         super(props);
+        this.isTestingConnection = false;
         this.state = {
             selectedOption: '',
         };
@@ -32,7 +33,7 @@ class SetupInstall extends Component {
     componentWillMount() {
         this.testConnection();
         this.checkHasConnection = setInterval(() => {
-          this.testConnection();
+            this.testConnection();
         }, 2000);
     }
 
@@ -41,12 +42,17 @@ class SetupInstall extends Component {
     }
 
     testConnection() {
-        fetch('https://api.commadotai.com/v1/me').then(() => {
-            this.props.updateHasDataConnection(true);
-        }).catch(() => {
-            this.props.updateHasDataConnection(false);
-            this.props.handleSetupConnectToWifiPressed();
-        })
+        if (!this.isTestingConnection) {
+            this.isTestingConnection = true;
+            fetch('https://api.commadotai.com/v1/me').then(() => {
+                this.props.updateHasDataConnection(true);
+                this.isTestingConnection = false;
+            }).catch(() => {
+                this.props.updateHasDataConnection(false);
+                this.props.handleSetupConnectToWifiPressed();
+                this.isTestingConnection = false;
+            })
+        }
     }
 
     handleInstallOptionPressed(selectedOption) {

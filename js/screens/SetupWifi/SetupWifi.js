@@ -59,6 +59,8 @@ class SetupWifi extends Component {
             errorMessage: 'There was a problem scanning WiFi networks. \nMake sure WiFi is enabled in \"More Options\" above.',
         };
 
+        this.isTestingConnection = false;
+        this.isCheckingSim = false;
         this.updateAvailableNetworks = this.updateAvailableNetworks.bind(this);
     }
 
@@ -73,11 +75,20 @@ class SetupWifi extends Component {
             this.testConnection();
         }, 2000);
         this.checkHasSim = setInterval(() => {
-            WifiModule.hasSim().then((hasSim) => {
-                this.setState({
-                    hasSim
+            if (!this.isCheckingSim) {
+                this.isCheckingSim = true;
+                WifiModule.hasSim().then((hasSim) => {
+                    this.setState({
+                        hasSim,
+                    })
+                    this.isCheckingSim = false;
+                }).catch(() => {
+                    this.setState({
+                        hasSim: false,
+                    })
+                    this.isCheckingSim = false;
                 })
-            })
+            }
         }, 1000);
         this.checkWifiEnabled = setInterval(() => {
             if (this.state.networks.length < 1) {
@@ -94,11 +105,16 @@ class SetupWifi extends Component {
     }
 
     testConnection() {
-        fetch('https://api.commadotai.com/v1/me').then(() => {
-            this.props.updateHasDataConnection(true);
-        }).catch(() => {
-            this.props.updateHasDataConnection(false);
-        })
+        if (!this.isTestingConnection) {
+            this.isTestingConnection = true;
+            fetch('https://api.commadotai.com/v1/me').then(() => {
+                this.props.updateHasDataConnection(true);
+                this.isTestingConnection = false;
+            }).catch(() => {
+                this.props.updateHasDataConnection(false);
+                this.isTestingConnection = false;
+            })
+        }
     }
 
     handleProblemScanningNetworks = () => {

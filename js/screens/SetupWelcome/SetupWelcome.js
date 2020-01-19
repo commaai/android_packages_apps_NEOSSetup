@@ -19,19 +19,30 @@ class SetupWelcome extends Component {
         hasDataConnection: PropTypes.bool,
     };
 
+    constructor(props) {
+        super(props);
+
+        this.isTestingConnection = false;
+    }
+
     componentWillMount() {
         this.testConnection();
         this.checkHasConnection = setInterval(() => {
-          this.testConnection();
+            this.testConnection();
         }, 2000);
     }
 
     testConnection() {
-        fetch('https://api.commadotai.com/v1/me').then(() => {
-            this.props.updateHasDataConnection(true);
-        }).catch(() => {
-            this.props.updateHasDataConnection(false);
-        })
+        if (!this.isTestingConnection) {
+            this.isTestingConnection = true;
+            fetch('https://api.commadotai.com/v1/me').then(() => {
+                this.props.updateHasDataConnection(true);
+                this.isTestingConnection = false;
+            }).catch(() => {
+                this.props.updateHasDataConnection(false);
+                this.isTestingConnection = false;
+            })
+        }
     }
 
     componentWillUnmount() {

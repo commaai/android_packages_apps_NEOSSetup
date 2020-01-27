@@ -44,7 +44,7 @@ class SetupInstallCustom extends Component {
     }
 
     hasValidURL(softwareUrl) {
-        const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+        const expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,18}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
         var pattern = new RegExp(expression);
         return pattern.test(softwareUrl);
     }
